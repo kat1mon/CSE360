@@ -8,12 +8,12 @@ public class Seller extends User{
 	}
 	
 	public void addBook(Book b) {
-		this.sys.add(b);
+		//this.sys.add(b);
 	}
 	
 	public void removeBook(Book b) {
 		activeListings.remove(b);
-		this.sys.remove(b);
+		//this.sys.remove(b);
 	}
 	
 	public void update(User u) {

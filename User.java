@@ -11,7 +11,6 @@ public class User {
 	private Cart userCart;
 	private boolean loggedIn;
 	private ArrayList<Order> recentOrders;
-	static BookSystem sys;
 	
 	public User(String e, String p, boolean[] r) {
 		this.asuEmail = e;
@@ -22,7 +21,7 @@ public class User {
 		this.userCart = new Cart();
 		this.loggedIn = false;
 		this.recentOrders = new ArrayList<Order>();
-		this.sys = s;
+		//this.sys = s;
 	}
 	
 	public void setListings(ArrayList<Book> l) {

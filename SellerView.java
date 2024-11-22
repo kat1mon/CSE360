@@ -1,4 +1,3 @@
-package application;
 
 import java.util.ArrayList;
 
@@ -18,7 +17,10 @@ import javafx.scene.control.ListView;
 
 
 public class SellerView {
+	private Main app;
+	BookSystem sys;
     private Scene scene; // Store the Scene object
+    
     private ArrayList<Book> book_arr; 
     private ObservableList<String> listings;
     
@@ -31,47 +33,16 @@ public class SellerView {
     private ComboBox<String> condition_groupOption;
 
     
-    public SellerView() {
+    public SellerView(BookSystem s, Main a) {
+    	this.app = a;
+    	this.sys = s;
+    	scene = setupScene();
     	
     	listings = FXCollections.observableArrayList();
         book_arr = new ArrayList<>();
     	
-        // First pane
-        Pane pane = new Pane();
-        pane.setStyle("-fx-background-color: darkred;");
-
-        // Book Nook label
-        Label bookNook = new Label("Book Nook");
-        bookNook.setStyle("-fx-background-color: Yellow");
-        bookNook.setFont(new Font("Arial", 24)); 
-        bookNook.setLayoutX(10); 
-        bookNook.setLayoutY(10); 
-        pane.getChildren().add(bookNook);
         
-        //Your Account Button
-        Button your_account_btn = new Button("Your Account");
-        your_account_btn.setPrefWidth(100); 
-        your_account_btn.setPrefHeight(20);
-        your_account_btn.setLayoutX(650);
-        your_account_btn.setLayoutY(10);
-        pane.getChildren().add(your_account_btn);
         
-        //Logout Button
-        Button log_out_Button = new Button("Log Out");
-        log_out_Button.setPrefWidth(100); 
-        log_out_Button.setPrefHeight(20);
-        log_out_Button.setLayoutX(790);
-        log_out_Button.setLayoutY(10);
-        pane.getChildren().add(log_out_Button);
-        
-        //Second Pane
-        Pane pane2 = new Pane();
-        pane2.setStyle("-fx-background-color: white;");
-        pane2.setPrefWidth(800); 
-        pane2.setPrefHeight(450);
-        pane2.setLayoutX((900 - 800) / 2.0);
-        pane2.setLayoutY(70);
-        pane.getChildren().add(pane2);
         
         //Create a listing
         Label create_listing = new Label("Create a Listing");
@@ -244,6 +215,36 @@ public class SellerView {
 
 
         this.scene = new Scene(pane, 900, 550);
+    }
+    
+    private Scene setupScene() {
+    	// First pane
+        Pane pane = new Pane();
+        pane.setStyle("-fx-background-color: darkred;");
+        
+     // Book Nook label
+        Label bookNook = new Label("Book Nook");
+        bookNook.setStyle("-fx-background-color: Yellow");
+        bookNook.setFont(new Font("Arial", 24)); 
+        bookNook.setLayoutX(10); 
+        bookNook.setLayoutY(10); 
+        pane.getChildren().add(bookNook);
+        
+      //Your Account Button
+        Button your_account_btn = new Button("Your Account");
+        your_account_btn.setPrefWidth(100); 
+        your_account_btn.setPrefHeight(20);
+        your_account_btn.setLayoutX(650);
+        your_account_btn.setLayoutY(10);
+        pane.getChildren().add(your_account_btn);
+        
+      //Logout Button
+        Button log_out_Button = new Button("Log Out");
+        log_out_Button.setPrefWidth(100); 
+        log_out_Button.setPrefHeight(20);
+        log_out_Button.setLayoutX(790);
+        log_out_Button.setLayoutY(10);
+        pane.getChildren().add(log_out_Button);
     }
     
     private void confirm_user_window(String bookName, String authorName, int publication_year, String category, String condition, int quantity, double price) {

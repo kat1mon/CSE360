@@ -17,22 +17,22 @@ public class Buyer extends User{
 	}
 	
 	public void AddToCart(Book b) {
-		this.getCart().add(b);
+		this.getCart().addBook(b);
 	}
 	
 	public void purchaseCart() {
 		Order newOrder = new Order();
 		this.getOrders().add(newOrder);
 		this.selectedList.clear();
-		this.getCart().empty();
+		this.getCart().clearCart();
 	}
 	
 	public void removeFromCart(Book b) {
-		this.getCart().remove(b);
+		this.getCart().remove_Book(b);
 	}
 	
 	public void clearCart() {
-		this.getCart().empty();
+		this.getCart().clearCart();
 	}
 	
 	public void updateUser(User u) {
