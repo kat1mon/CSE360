@@ -1,228 +1,69 @@
 
+
+
 import java.util.ArrayList;
 
+import javafx.application.Platform;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleGroup;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.scene.control.ListView;
-
 
 public class SellerView {
 	private Main app;
 	BookSystem sys;
+	User usr;
+	
     private Scene scene; // Store the Scene object
-    
-    private ArrayList<Book> book_arr; 
-    private ObservableList<String> listings;
-    
-    private TextField Book_name_textfield;
-    private TextField author_name_textField;
-    private TextField publication_date_textField;
-    private TextField price_textField;
-    private TextField quantity_textField;
-    private ComboBox<String> category_groupOption;
-    private ComboBox<String> condition_groupOption;
 
     
-    public SellerView(BookSystem s, Main a) {
+    public SellerView(BookSystem s, Main a, User u) {
     	this.app = a;
     	this.sys = s;
+    	this.usr = u;
     	scene = setupScene();
-    	
-    	listings = FXCollections.observableArrayList();
-        book_arr = new ArrayList<>();
-    	
-        
-        
-        
-        //Create a listing
-        Label create_listing = new Label("Create a Listing");
-        create_listing.setFont(new Font("Arial", 35)); 
-        create_listing.setLayoutX(10);
-        create_listing.setLayoutY(10);
-        pane2.getChildren().add(create_listing);
-        
-        Label your_listing = new Label("Your Listings");
-        your_listing.setFont(new Font("Arial", 35)); 
-        your_listing.setLayoutX(500);
-        your_listing.setLayoutY(10);
-        pane2.getChildren().add(your_listing);
-        
-        
-        //Booking Listing part
-    
-		Label Book_name = new Label("Name");
-		Book_name.setFont(new Font("Arial", 16));
-		Book_name.setLayoutX(20);
-		Book_name.setLayoutY(60);
-		pane2.getChildren().add(Book_name);
-		
-		Book_name_textfield = new TextField();
-		Book_name_textfield.setLayoutX(150);
-		Book_name_textfield.setLayoutY(60);
-		Book_name_textfield.setPrefWidth(200);
-		pane2.getChildren().add(Book_name_textfield);
-		
-		Label author_name = new Label("Author");
-		author_name.setFont(new Font("Arial", 16));
-		author_name.setLayoutX(20);
-		author_name.setLayoutY(100);
-		pane2.getChildren().add(author_name);
-		
-		author_name_textField = new TextField();
-		author_name_textField.setLayoutX(150);
-		author_name_textField.setLayoutY(100);
-		author_name_textField.setPrefWidth(200);
-		pane2.getChildren().add(author_name_textField);
-		
-		Label publication_date = new Label("Publication Date");
-		publication_date.setFont(new Font("Arial", 16));
-		publication_date.setLayoutX(20);
-		publication_date.setLayoutY(140);
-		pane2.getChildren().add(publication_date);
-		
-		publication_date_textField = new TextField();
-		publication_date_textField .setLayoutX(150);
-		publication_date_textField .setLayoutY(140);
-		publication_date_textField .setPrefWidth(200);
-		pane2.getChildren().add(publication_date_textField);
-		
-		Label category = new Label("Category");
-		category.setFont(new Font("Arial", 16));
-		category.setLayoutX(20);
-		category.setLayoutY(180);
-		pane2.getChildren().add(category );
-		
-		category_groupOption = new ComboBox<>();
-		category_groupOption.getItems().addAll("Fiction", "Non-Fiction", "Science", "Biography", "Other");
-		category_groupOption.setLayoutX(150);
-		category_groupOption.setLayoutY(180);
-		category_groupOption.setPrefWidth(200);
-		pane2.getChildren().add(category_groupOption);
-		
-		Label condition = new Label("Condition");
-		condition.setFont(new Font("Arial", 16));
-		condition.setLayoutX(20);
-		condition.setLayoutY(220);
-		pane2.getChildren().add(condition);
-		
-		condition_groupOption = new ComboBox<>();
-		condition_groupOption.getItems().addAll("New", "Used", "Bad");
-		condition_groupOption.setLayoutX(150);
-		condition_groupOption.setLayoutY(220);
-		condition_groupOption.setPrefWidth(200);
-		pane2.getChildren().add(condition_groupOption);
-		
-		Label quantity = new Label("Quantity");
-		quantity.setFont(new Font("Arial", 16));
-		quantity.setLayoutX(20);
-		quantity.setLayoutY(260);
-		pane2.getChildren().add(quantity);
-		
-		quantity_textField = new TextField();
-		quantity_textField.setLayoutX(150);
-		quantity_textField.setLayoutY(260);
-		quantity_textField.setPrefWidth(200);
-		pane2.getChildren().add(quantity_textField);
-		
-		Label price = new Label("Price");
-		price.setFont(new Font("Arial", 16));
-		price.setLayoutX(20);
-		price.setLayoutY(300);
-		pane2.getChildren().add(price);
-		
-		price_textField = new TextField();
-		price_textField.setLayoutX(150);
-		price_textField.setLayoutY(300);
-		price_textField.setPrefWidth(200);
-	    pane2.getChildren().add(price_textField);
-		
-		 // Add the Publish button
-		Button publish_Btn = new Button("Publish");
-		publish_Btn.setLayoutX(150);
-		publish_Btn.setLayoutY(350);
-		publish_Btn.setPrefWidth(100);
-		pane2.getChildren().add(publish_Btn);
-		
-		//Add the delete button 
-		Button delete_Btn = new Button("Delete");
-		delete_Btn.setLayoutX(500);
-		delete_Btn.setLayoutY(420);
-		delete_Btn.setPrefWidth(100);
-		pane2.getChildren().add(delete_Btn);
-		
-
-	
-		ListView<String> listingsListView = new ListView<>(listings);
-		listingsListView.setLayoutX(420);
-		listingsListView.setLayoutY(60);
-		listingsListView.setPrefWidth(350);
-		listingsListView.setPrefHeight(350);
-		pane2.getChildren().add(listingsListView);
-
-
-		publish_Btn.setOnAction(e -> {
-			 // Get book details
-            String BookName = Book_name_textfield.getText();
-            String AuthorName = author_name_textField.getText();
-            int PublicationDate = Integer.parseInt(publication_date_textField.getText());
-            String Category = category_groupOption.getValue();
-            String Condition = condition_groupOption.getValue();
-            int Quantity = Integer.parseInt(quantity_textField.getText());
-            int Price = Integer.parseInt(price_textField.getText());
-
-            confirm_user_window(BookName, AuthorName, PublicationDate, Category, Condition, Quantity, Price);
-
-        });
-		
-		delete_Btn.setOnAction(e -> {
-	        Book deletedBook = null;
-		    String selectedListing = listingsListView.getSelectionModel().getSelectedItem();
-		    if (selectedListing != null) {
-		        for (Book search_book : book_arr) {
-		            String listingFormat = String.format(
-		                "%s\nAuthor: %s\nPublished: %d\nCategory: %s\nCondition: %s\nSelling: %d\n",
-		                search_book.getBookName(),
-		                search_book.getAuthorName(),
-		                search_book.getPublicationDate(),
-		                search_book.getCategory(),
-		                search_book.getCondition(),
-		                search_book.getQuantity()
-		            );
-		            if (listingFormat.equals(selectedListing)) {
-		                deletedBook = search_book;
-		                break; //Book Found
-		            }
-		        }
-		        if (deletedBook != null) {
-		            deleted_window(
-		                deletedBook.getBookName(), deletedBook.getAuthorName(), deletedBook.getPublicationDate(), deletedBook.getCategory(), 
-		                deletedBook.getCondition(), deletedBook.getQuantity(), deletedBook.getPrice()   
-		            );
-		        }
-		    }
-		});
-
-
-
-        this.scene = new Scene(pane, 900, 550);
     }
     
-    private Scene setupScene() {
+    private VBox scrlSetup() {
+    	VBox list = new VBox(20);
+        
+    	ToggleGroup g = new ToggleGroup();
+    	
+        for(Book b : usr.getListings()) {
+        	RadioButton n = new RadioButton(
+        			b.getTitle() + "\n" +
+        			"Author: " + b.getAuthor() + "\n" +
+        			"Published: " + b.getDate() + "\n" +
+        			"Category: " + b.getCategory() + "\n" +
+        			"Condition: " + b.getCondition() + "\n" +
+        			"Selling: " + b.getQuantity() + "\n"
+        	);
+        	n.setToggleGroup(g);
+        	list.getChildren().add(n);
+        }
+        
+        return list;
+    }
+    
+    private Pane createOuter() {
     	// First pane
         Pane pane = new Pane();
         pane.setStyle("-fx-background-color: darkred;");
         
-     // Book Nook label
+        // Book Nook label
         Label bookNook = new Label("Book Nook");
         bookNook.setStyle("-fx-background-color: Yellow");
         bookNook.setFont(new Font("Arial", 24)); 
@@ -230,24 +71,203 @@ public class SellerView {
         bookNook.setLayoutY(10); 
         pane.getChildren().add(bookNook);
         
-      //Your Account Button
+        //Your Account Button
         Button your_account_btn = new Button("Your Account");
         your_account_btn.setPrefWidth(100); 
         your_account_btn.setPrefHeight(20);
-        your_account_btn.setLayoutX(650);
+        your_account_btn.setLayoutX(500);
         your_account_btn.setLayoutY(10);
         pane.getChildren().add(your_account_btn);
         
-      //Logout Button
+        //Logout Button
         Button log_out_Button = new Button("Log Out");
         log_out_Button.setPrefWidth(100); 
         log_out_Button.setPrefHeight(20);
-        log_out_Button.setLayoutX(790);
+        log_out_Button.setLayoutX(650);
         log_out_Button.setLayoutY(10);
         pane.getChildren().add(log_out_Button);
+        
+        Pane inner = createInner();
+        inner.setLayoutX(50);
+        inner.setLayoutY(100);
+        
+        pane.getChildren().add(inner);
+        
+        return pane;
     }
     
-    private void confirm_user_window(String bookName, String authorName, int publication_year, String category, String condition, int quantity, double price) {
+    private Pane createInner() {
+    	Pane overall = new Pane();
+    	overall.setPrefSize(700, 550);
+    	overall.setStyle("-fx-background-color: white");
+    	
+    	VBox createList = createListingView();
+    	createList.setLayoutX(35);
+    	createList.setLayoutY(10);
+    	overall.getChildren().add(createList);
+    	
+    	VBox yourListings = createYourListingsView();
+    	yourListings.setLayoutX(415);
+    	yourListings.setLayoutY(10);
+    	overall.getChildren().add(yourListings);
+    	
+    	return overall;
+		
+    }
+    
+    private VBox createListingView() {
+    	VBox result = new VBox(25);
+    	result.setAlignment(Pos.CENTER);
+    	
+    	Label create_listing = new Label("Create Listing");
+        create_listing.setFont(new Font("Arial", 36)); 
+        create_listing.setPadding(new Insets(0, 0, 30, 0));
+        result.getChildren().add(create_listing);
+    	
+    	GridPane form = new GridPane();
+    	form.setHgap(25);
+    	form.setVgap(25);
+    	form.setPrefWidth(400);
+    	form.setPadding(new Insets(0, 0, 34, 0));
+    	
+        	//Booking Listing part
+    		Label Book_name = new Label("Name:");
+    		Book_name.setFont(new Font("Arial", 16));
+    		form.add(Book_name, 0, 0);
+    		
+    		TextField Book_name_textfield = new TextField();
+    		Book_name_textfield.setPrefWidth(200);
+    		Book_name_textfield.setId("bookField");
+    		form.add(Book_name_textfield, 1, 0);
+    		
+    		Label author_name = new Label("Author:");
+    		author_name.setFont(new Font("Arial", 16));
+    		form.add(author_name, 0, 1);
+    		
+    		TextField author_name_textField = new TextField();
+    		author_name_textField.setPrefWidth(200);
+    		author_name_textField.setId("authorField");
+    		form.add(author_name_textField, 1, 1);
+    		
+    		Label publication_date = new Label("Publication Date:");
+    		publication_date.setFont(new Font("Arial", 16));
+    		form.add(publication_date, 0, 2);
+    		
+    		TextField publication_date_textField = new TextField();
+    		publication_date_textField.setPrefWidth(200);
+    		publication_date_textField.setId("pubField");
+    		form.add(publication_date_textField, 1, 2);
+    		
+    		Label category = new Label("Category:");
+    		category.setFont(new Font("Arial", 16));
+    		form.add(category, 0, 3);
+    		
+    		ComboBox<String> category_groupOption = new ComboBox<>();
+    		category_groupOption.getItems().addAll("Math", "English", "Natural Science", "Computer", "Other");
+    		category_groupOption.setPrefWidth(200);
+    		category_groupOption.setId("catField");
+    		form.add(category_groupOption, 1, 3);
+    		
+    		Label condition = new Label("Condition:");
+    		condition.setFont(new Font("Arial", 16));
+    		form.add(condition, 0, 4);
+    		
+    		ComboBox<String> condition_groupOption = new ComboBox<>();
+    		condition_groupOption.getItems().addAll("Like New", "Moderately Used", "Heavily Used");
+    		condition_groupOption.setPrefWidth(200);
+    		condition_groupOption.setId("conField");
+    		form.add(condition_groupOption, 1, 4);
+    		
+    		Label quantity = new Label("Quantity:");
+    		quantity.setFont(new Font("Arial", 16));
+    		form.add(quantity, 0, 5);
+    		
+    		TextField quantity_textField = new TextField();
+    		quantity_textField.setPrefWidth(200);
+    		quantity_textField.setId("quanField");
+    		form.add(quantity_textField, 1, 5);
+    		
+    		Label price = new Label("Price:");
+    		price.setFont(new Font("Arial", 16));
+    		form.add(price, 0, 6);
+    		
+    		TextField price_textField = new TextField();
+    		price_textField.setPrefWidth(200);
+    		price_textField.setId("priceField");
+    		form.add(price_textField, 1, 6);
+    		
+    		result.getChildren().add(form);
+    		
+    		 // Add the Publish button
+    		Button publish_Btn = new Button("Publish");
+    		publish_Btn.setPrefWidth(200);
+    		publish_Btn.setPrefHeight(50);
+    		result.getChildren().add(publish_Btn);
+    		publish_Btn.setOnAction(event -> {
+    			Book b = new Book(Book_name_textfield.getText(), 
+    					author_name_textField.getText(), 
+    					publication_date_textField.getText(), 
+    					category_groupOption.getSelectionModel().getSelectedItem(), 
+    					condition_groupOption.getSelectionModel().getSelectedItem(),
+    					Double.parseDouble(price_textField.getText()),
+    					Integer.parseInt((quantity_textField.getText())),
+    					usr.getEmail());
+    			
+    			confirm_user_window(b);
+    		});
+    	
+    	return result;
+        
+        
+    }
+    
+    private VBox createYourListingsView() {
+    	VBox result = new VBox(20);
+    	result.prefWidth(300);
+    	result.setAlignment(Pos.CENTER);
+    	
+    	Label your_listing = new Label("Your Listings");
+        your_listing.setFont(new Font("Arial", 36)); 
+        result.getChildren().add(your_listing);
+        
+        ScrollPane scrl = new ScrollPane();
+        VBox.setVgrow(scrl, Priority.ALWAYS);
+        
+        scrl.setVmax(400);
+        scrl.setPrefSize(250, 400);;
+        scrl.setContent(scrlSetup());
+        scrl.setId("scroll");
+
+        result.getChildren().add(scrl);
+        
+        Button delete_Btn = new Button("Delete");
+		delete_Btn.setPrefWidth(200);
+		delete_Btn.setPrefHeight(50);
+		result.getChildren().add(delete_Btn);
+		delete_Btn.setOnAction(event -> {
+			Book b = new Book(Book_name_textfield.getText(), 
+					author_name_textField.getText(), 
+					publication_date_textField.getText(), 
+					category_groupOption.getSelectionModel().getSelectedItem(), 
+					condition_groupOption.getSelectionModel().getSelectedItem(),
+					Double.parseDouble(price_textField.getText()),
+					Integer.parseInt((quantity_textField.getText())),
+					usr.getEmail());
+			
+			confirm_user_window(b);
+		});
+		
+		return result;
+    }
+    
+    private Scene setupScene() {
+    	Pane outer = createOuter();
+        
+    	return (new Scene(outer, 800, 700));
+    }
+    
+   private void confirm_user_window(Book b) {
+	   System.out.println("REACHED");
         Stage confirmationStage = new Stage();
         Pane pane = new Pane();
         pane.setPrefSize(400, 400);
@@ -280,43 +300,43 @@ public class SellerView {
         pane2.setLayoutY(100);
         pane.getChildren().add(pane2);
         
-        Label book_name_text = new Label(bookName);
+        Label book_name_text = new Label(b.getTitle());
         book_name_text.setLayoutX(70);
         book_name_text.setLayoutY(10);
         pane2.getChildren().add(book_name_text);
         
-        Label author_text = new Label(String.format("Author: %s", authorName));
+        Label author_text = new Label(String.format("Author: %s", b.getAuthor()));
         author_text.setLayoutX(80);
         author_text.setLayoutY(25);
         pane2.getChildren().add(author_text);
         
-        Label year_text = new Label(String.format("Published: %d", publication_year));
+        Label year_text = new Label(String.format("Published: %s", b.getDate()));
         year_text.setLayoutX(80);
         year_text.setLayoutY(40);
         pane2.getChildren().add(year_text);
         
-        Label category_text = new Label(String.format("Published: %s", category));
+        Label category_text = new Label(String.format("Published: %s", b.getCategory()));
         category_text.setLayoutX(80);
         category_text.setLayoutY(55);
         pane2.getChildren().add(category_text);
         
-        Label condition_text = new Label(String.format("Condition: %s", condition));
+        Label condition_text = new Label(String.format("Condition: %s", b.getCondition()));
         condition_text.setLayoutX(80);
         condition_text.setLayoutY(70);
         pane2.getChildren().add(condition_text);
         
-        Label price_text = new Label(String.format("Price: $ %.2f", price));
+        Label price_text = new Label(String.format("Price: $ %.2f", b.getPrice()));
         price_text.setLayoutX(80);
         price_text.setLayoutY(85);
         pane2.getChildren().add(price_text);
         
-        Label quantity_text = new Label(String.format("Quantity: %d", quantity));
+        Label quantity_text = new Label(String.format("Quantity: %d", b.getQuantity()));
         quantity_text.setLayoutX(80);
         quantity_text.setLayoutY(100);
         pane2.getChildren().add(quantity_text);
         
         
-        Label Fifth_row = new Label("By Clicking yes, you agree that 20% of your profit will go");
+        Label Fifth_row = new Label("By clicking yes, you agree that 20% of your profit will go");
         Fifth_row.setLayoutX(60);
         Fifth_row.setLayoutY(240);
         pane.getChildren().add(Fifth_row);
@@ -341,26 +361,47 @@ public class SellerView {
         confirmationStage.setScene(confirmationScene);
         confirmationStage.show();
         
+        
         yes_btn.setOnAction(e -> {
-        	String listing = String.format(
-                    "%s\nAuthor: %s\nPublished: %d\nCategory: %s\nCondition: %s\nSelling: %d\n",
-                    bookName, authorName, publication_year, category, condition, quantity, price);
-        	listings.add(listing);
-        	
-        	Book new_book = new Book(bookName, authorName, publication_year, category, condition, quantity, price);
-            book_arr.add(new_book);   
+        	//THIS ISNT UPDATING THE MAIN SELLER VIEW. HELP!!
+        	System.out.println("YES SELECTED");
+        	this.sys.addBook(b);
+        	ArrayList<Book> l = this.usr.getListings();
+        	l.add(b);
+        	this.usr.setListings(l);
             
-            Book_name_textfield.clear();
-            author_name_textField.clear();
-            publication_date_textField.clear();
-            quantity_textField.clear();
-            price_textField.clear();
-            category_groupOption.getSelectionModel().clearSelection();
-            condition_groupOption.getSelectionModel().clearSelection();
-            	
+            Platform.runLater(() -> {
+            	TextField title = (TextField) this.scene.lookup("#bookField");
+                title.clear();
+                
+                TextField author = (TextField) this.scene.lookup("#authorField");
+                author.clear();
+
+                TextField pub = (TextField) this.scene.lookup("#pubField");
+                pub.clear();
+                
+                @SuppressWarnings("unchecked")
+    			ComboBox<String> cat = (ComboBox<String>) this.scene.lookup("#catField");
+                cat.getSelectionModel().clearSelection();
+                
+                @SuppressWarnings("unchecked")
+    			ComboBox<String> con = (ComboBox<String>) this.scene.lookup("#conField");
+                con.getSelectionModel().clearSelection();
+                
+                TextField quan = (TextField) this.scene.lookup("#quanField");
+                quan.clear();
+                
+                TextField price = (TextField) this.scene.lookup("#priceField");
+                price.clear();
+                
+                ScrollPane scrl = (ScrollPane) this.scene.lookup("#scroll");
+                if(scrl == null) {
+                	System.out.println("ERR: SCRL IS NULL");
+                }
+                scrl.setContent(scrlSetup());
+            });
             
             confirmationStage.close();
-            
         });
         
         no_btn.setOnAction(e -> {
@@ -368,8 +409,9 @@ public class SellerView {
         });
         
     }
-        
-        private void deleted_window(String bookName, String authorName, int publication_year, String category, String condition, int quantity, double price) {
+  
+
+  /*private void deleted_window(Book selection) {
             Stage deletionStage = new Stage();
             Pane pane = new Pane();
             pane.setPrefSize(400, 400);
@@ -458,11 +500,10 @@ public class SellerView {
                 deletionStage.close();
             });
             
-        }
-
+        }*/
 
     // Method to return the Scene
     public Scene getScene() {
-        return scene;
+    	return setupScene();
     }
 }

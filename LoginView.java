@@ -132,8 +132,11 @@ public class LoginView {
 				{
 					// Determines which view to send the user to based on mode selected
 					String selectedMode = modeCombo.getValue();  // Get the selected mode
-			
-					if (selectedMode != null) 
+					String inputEmail = idField.getText();
+					String pW = passwordField.getText();
+					User selected = sys.getUser(inputEmail);
+					
+					if (selectedMode != null && selected != null && selected.checkPassword(pW)) 
 					{
 						switch (selectedMode) 
 						{
@@ -141,7 +144,8 @@ public class LoginView {
 								System.out.println("Test1");
 								//redirectScreen("Buying");
 							case "Selling":
-								redirectScreen("Selling");
+								System.out.println("CONFIRMED");
+								redirectScreen("Selling", selected);
 								//openSellingPage(primaryStage);
 								break;
 							default:
@@ -153,9 +157,9 @@ public class LoginView {
 				
 	}
 	
-	private Scene redirectScreen(String screen) {
+	private Scene redirectScreen(String screen, User u) {
 		if(screen == "Selling") {
-			app.showSellerView();
+			app.showSellerView(u);
 		}
 		return null;
 	}
