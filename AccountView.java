@@ -1,45 +1,46 @@
-import java.util.ArrayList;
 
-import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.RadioButton;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 public class AccountView{
     private Main app;
 	BookSystem sys;
 	User usr;
+	Stage primaryStage;
 	private ToggleGroup g;
+	private String from;
 	
     private Scene scene;
-	public AccountView(BookSystem s, Main a, User u) {
+	public AccountView(BookSystem s, Main a, User u, Stage p, String f) {
     	this.app = a;
     	this.sys = s;
     	this.usr = u;
+    	this.from = f;
     	scene = setupScene();
+    	primaryStage = p;
+    	primaryStage.setScene(scene);
     }
     
     private VBox scrlSetup() {
     	VBox list = new VBox(20);
-        
-    	g = new ToggleGroup();
     	
         for(Book b : usr.getListings()) {
-        	RadioButton n = new RadioButton(
+        	Label l = new Label(
         			b.getTitle() + "\n" +
         			"Author: " + b.getAuthor() + "\n" +
         			"Published: " + b.getDate() + "\n" +
@@ -47,12 +48,25 @@ public class AccountView{
         			"Condition: " + b.getCondition() + "\n" +
         			"Selling: " + b.getQuantity() + "\n"
         	);
-        	n.setUserData(b);
-        	n.setToggleGroup(g);
-        	list.getChildren().add(n);
+        	l.setAlignment(Pos.CENTER);
+        	l.setFont(Font.font("Arial", 18));
+        	l.setPadding(new Insets(15));
+        	list.getChildren().add(l);
         }
         
         return list;
+    }
+    
+    private void goBack() {
+    	if(from == "Seller") {
+    		new SellerView(sys, app, usr, primaryStage);
+    	}else if(from == "Buyer") {
+    		new BuyerView(sys, app, usr, primaryStage);
+    	}
+    }
+    
+    private void logOut() {
+    	primaryStage.setScene(new LoginView(sys, app).layout);
     }
     
     private Pane createOuter() {
@@ -61,27 +75,33 @@ public class AccountView{
         pane.setStyle("-fx-background-color: darkred;");
         
         // Book Nook label
-        Label bookNook = new Label("Book Nook");
-        bookNook.setStyle("-fx-background-color: Yellow");
-        bookNook.setFont(new Font("Arial", 24)); 
-        bookNook.setLayoutX(10); 
-        bookNook.setLayoutY(10); 
-        pane.getChildren().add(bookNook);
+        Text title = new Text("Book Nook");
+		title.setFont(Font.font("Lucida Fax", FontWeight.BOLD, 36));
+		title.setFill(Color.web("#FFD700"));
+        title.setLayoutX(50); 
+        title.setLayoutY(60); 
+        pane.getChildren().add(title);
         
         //Your Account Button
         Button back_btn = new Button("Home");
-        back_btn.setPrefWidth(100); 
-        back_btn.setPrefHeight(20);
-        back_btn.setLayoutX(500);
-        back_btn.setLayoutY(10);
+        back_btn.setPrefWidth(150); 
+        back_btn.setPrefHeight(40);
+        back_btn.setLayoutX(350);
+        back_btn.setLayoutY(30);
+        back_btn.setStyle("-fx-background-color: #9a9a9a; -fx-text-fill: white;");
+        back_btn.setFont(Font.font("arial", FontWeight.BOLD, 16));
+        back_btn.setOnAction(event -> goBack());
         pane.getChildren().add(back_btn);
         
         //Logout Button
         Button log_out_Button = new Button("Log Out");
-        log_out_Button.setPrefWidth(100); 
-        log_out_Button.setPrefHeight(20);
-        log_out_Button.setLayoutX(650);
-        log_out_Button.setLayoutY(10);
+        log_out_Button.setStyle("-fx-background-color: #9a9a9a; -fx-text-fill: white;");
+        log_out_Button.setPrefWidth(150); 
+        log_out_Button.setPrefHeight(40);
+        log_out_Button.setLayoutX(550);
+        log_out_Button.setLayoutY(30);
+        log_out_Button.setFont(Font.font("arial", FontWeight.BOLD, 16));
+        log_out_Button.setOnAction(event -> logOut());
         pane.getChildren().add(log_out_Button);
         //log_out_Button.setOnAction(event -> app.showLoginView());
         
@@ -100,57 +120,80 @@ public class AccountView{
     	overall.setPrefSize(700, 550);
     	overall.setStyle("-fx-background-color: white");
 
-        String username = User.getEmail();
-        Label greeting = new Label("Welcome " + username);
-        greeting.setStyle("-fx-font-size: 18px; -fx-font-weight: bold;");
+        String username = usr.getEmail();
+        Label greeting = new Label("     Welcome " + username);
+        greeting.setStyle("-fx-text-fill: #8C1D40;-fx-background-color: #FFD700; -fx-font-size: 30px; -fx-font-weight: bold;");
+        //greeting.setLayoutY(20);
+        greeting.setMinWidth(700);
+        greeting.setMinHeight(50);
+        
         overall.getChildren().add(greeting);
 
         Button change_Pswd_Button = new Button("Change Password");
-        withdraw_Button.setPrefWidth(200);
-		withdraw_Button.setPrefHeight(50);
+        change_Pswd_Button.setLayoutX(35);
+        change_Pswd_Button.setLayoutY(75);
+        change_Pswd_Button.setPrefWidth(200);
+        change_Pswd_Button.setPrefHeight(50);
         change_Pswd_Button.setOnAction(e -> changingPassword());
+        overall.getChildren().add(change_Pswd_Button);
 
         Button withdraw_Button = new Button("Withdraw Funds");
+        withdraw_Button.setLayoutX(415);
+        withdraw_Button.setLayoutY(75);
         withdraw_Button.setPrefWidth(200);
 		withdraw_Button.setPrefHeight(50);
+		overall.getChildren().add(withdraw_Button);
+		
         //withdraw_Button.setOnAction(e -> withdrawFunds());
-    	
-    	VBox recentOrders = cartListView();
-    	recentOrders.setLayoutX(35);
-    	recentOrders.setLayoutY(10);
-    	overall.getChildren().add(recentOrders);
+		
+		VBox yourOrders = createRecentOrders();
+		yourOrders.setLayoutX(35);
+    	yourOrders.setLayoutY(150);
+    	overall.getChildren().add(yourOrders);
     	
     	VBox yourListings = createYourListingsView();
     	yourListings.setLayoutX(415);
-    	yourListings.setLayoutY(10);
+    	yourListings.setLayoutY(150);
     	overall.getChildren().add(yourListings);
     	
     	return overall;
 		
     }
     
-    private VBox cartListView(Book book) {
+    private VBox orderSetup() {
+    	VBox list = new VBox(20);
+        
+        for(Order o : usr.getOrders()) {
+        	Label l = new Label(
+        			o.getNumber() + "\n" +
+        			"Date: " + o.getOrderDate() + "\n" +
+        			"Cost: " + o.getTotalCost() + "\n" +
+        			"Tax: " + o.getTax() + "\n" +
+        			"Titles: " + o.getTitles()
+        	);
+        	l.setAlignment(Pos.CENTER);
+        	l.setFont(Font.font("Arial", 18));
+        	l.setPadding(new Insets(15));
+        	list.getChildren().add(l);
+        }
+        
+        return list;
+    }
+    
+    private VBox createRecentOrders() {
     	VBox result = new VBox(25);
     	result.setAlignment(Pos.CENTER);
     	
-    	Label cart_list = new Label("Recent Orders");
-        cart_list.setFont(new Font("Arial", 36)); 
-        cart_list.setPadding(new Insets(0, 0, 30, 0));
-        result.getChildren().add(cart_list);
+    	Label orderList = new Label("Recent Orders");
+    	orderList.setFont(new Font("Arial", 36));
+    	result.getChildren().add(orderList);
     	
-    	// VBox order = new VBox();
-    	// order.setHgap(25);
-    	// order.setVgap(25);
-    	// order.setPrefWidth(400);
-    	// order.setPadding(new Insets(0, 0, 34, 0));
-    	
-        	//Booking Listing part
-
-            result.getChildren().add(new Text("Order #" + book.));
-            result.getChildren().add(new Text("Date Ordered: " + ));
-            result.getChildren().add(new Text(book.getTitle() + book.getAuthor()));
-            result.getChildren().add(new Text("Tax: " + ));
-            result.getChildren().add(new Text("Total: " + book.getPrice()));
+    	ScrollPane scrl = new ScrollPane();
+    	VBox.setVgrow(scrl, Priority.ALWAYS);
+    	//scrl.setVmax(400);
+        scrl.setPrefSize(250, 300);;
+    	scrl.setContent(orderSetup());
+    	result.getChildren().add(scrl);
     	
     	return result;
     }
@@ -167,8 +210,8 @@ public class AccountView{
         ScrollPane scrl = new ScrollPane();
         VBox.setVgrow(scrl, Priority.ALWAYS);
         
-        scrl.setVmax(400);
-        scrl.setPrefSize(250, 400);;
+        //scrl.setVmax(400);
+        scrl.setPrefSize(250, 230);;
         scrl.setContent(scrlSetup());
         scrl.setId("scroll");
 
@@ -179,9 +222,8 @@ public class AccountView{
 		delete_Btn.setPrefHeight(50);
 		result.getChildren().add(delete_Btn);
 		delete_Btn.setOnAction(event -> {
-			Book b = (Book) g.getSelectedToggle().getUserData();
-			
-			deleted_window(b);
+		Book b = (Book) g.getSelectedToggle().getUserData();
+
 		});
 		
 		return result;
@@ -191,8 +233,8 @@ public class AccountView{
         Label changeLabel = new Label("Change Label");
         changeLabel.setFont(new Font("Arial", 36)); 
         
-        ButtonType submitButton = new ButtonType("Submit", ButtonBar.ButtonData.OK_DONE);
-        dialog.getDialogPane().getButtonTypes().addAll(submitButton, ButtonType.CANCEL);
+        Button submitButton = new Button("Submit");
+        //dialog.getDialogPane().getButtonTypes().addAll(submitButton, ButtonType.CANCEL);
 
         GridPane grid = new GridPane();
         grid.setHgap(10);
@@ -210,7 +252,7 @@ public class AccountView{
         grid.add(new Label("Retype Password:"), 0, 2);
         grid.add(retypePassword, 1, 2);
 
-        dialog.getDialogPane().setContent(grid);
+        //dialog.getDialogPane().setContent(grid);
     }
     
     private Scene setupScene() {

@@ -26,6 +26,7 @@ public class LoginView {
 		this.app = a;
 		
 		layout = setupScene();
+		
 	}
 	
 	private Scene setupScene() {

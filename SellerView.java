@@ -42,6 +42,10 @@ public class SellerView {
     	primaryStage.setScene(scene);
     }
     
+    private void showAccountView() {
+    	new AccountView(sys, app, usr, primaryStage, "Seller");
+    }
+    
     private VBox scrlSetup() {
     	VBox list = new VBox(20);
         
@@ -85,6 +89,7 @@ public class SellerView {
         your_account_btn.setLayoutY(30);
         your_account_btn.setStyle("-fx-background-color: #9a9a9a; -fx-text-fill: white;");
 		your_account_btn.setFont(Font.font("arial", FontWeight.BOLD, 16));
+		your_account_btn.setOnAction(event -> showAccountView());
         pane.getChildren().add(your_account_btn);
         
         

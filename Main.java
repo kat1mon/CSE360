@@ -1,8 +1,10 @@
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Map.Entry;
+import java.util.Scanner;
 
 import javafx.application.Application;
 //import javafx.scene.Scene;
@@ -20,6 +22,7 @@ public class Main extends Application{
 		new SellerView(sys, this, u, primaryStage);
 	}
 	
+	
 	public void showLoginView() {
 		primaryStage.setScene(new LoginView(sys, this).getScene());
 	}
@@ -35,6 +38,7 @@ public class Main extends Application{
 	public static void main(String[] args) {
 		boolean[] r = {true, true};
 		
+		readFiles();
 		
 		User DEBUG = new User("beep", "boop", r);
 		ArrayList<Book> l = new ArrayList<>();
@@ -50,7 +54,44 @@ public class Main extends Application{
 	
 	//FIXME
 	private static void readFiles() {
-		
+		try {
+			Scanner usrScanner = new Scanner(new File("PhaseIII/Files/users.txt"));
+			while(usrScanner.hasNextLine()) {
+				String email = usrScanner.nextLine();
+				String pW;
+				ArrayList<Book> books = new ArrayList<Book>();
+				Cart crt = new Cart();
+				ArrayList<Order> orders = new ArrayList<Order>();
+				Scanner individual = new Scanner(new File("PhaseIII/Files/" + email + "/info.txt"));
+				pW = individual.nextLine();
+
+				while(individual.nextLine() != "END OF LISTINGS") {
+					String title = individual.nextLine();
+					String author = individual.nextLine();
+					String date = individual.nextLine();
+					String cat = individual.nextLine();
+					String con = individual.nextLine();
+					double price = Double.parseDouble(individual.nextLine());
+					int quan = Integer.parseInt(individual.nextLine());
+					
+					Book b = new Book(title, author, date, cat, con, price, quan, email);
+					books.add(b);
+					sys.addBook(b);
+				}
+				
+				while(individual.nextLine() != "END OF CART") {
+					int num = Integer.parseInt(individual.nextLine());
+					String date = individual.nextLine();
+					while(individual.nextLine() != "}") {
+						
+					}
+				}
+				
+				User usr = new User();
+			}
+		} catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
 	}
 
  	private static void updateFiles() {
