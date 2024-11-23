@@ -26,7 +26,7 @@ public class AccountView{
 	private ToggleGroup g;
 	
     private Scene scene;
-	public SellerView(BookSystem s, Main a, User u) {
+	public AccountView(BookSystem s, Main a, User u) {
     	this.app = a;
     	this.sys = s;
     	this.usr = u;
