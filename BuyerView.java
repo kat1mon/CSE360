@@ -2,10 +2,8 @@ package application;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.geometry.VPos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
@@ -198,7 +196,6 @@ public class BuyerView{
 		clearCartButton.setFont(Font.font("arial", FontWeight.BOLD, 14));
 		clearCartButton.setPrefWidth(100);
 		
-		
 		EventHandler<ActionEvent> clear = new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent e) {
 				clearCart();
@@ -210,8 +207,7 @@ public class BuyerView{
 		Button purchaseButton = new Button("Purchase");
 		purchaseButton.setStyle("-fx-background-color: #8C1D40; -fx-text-fill: white;");
 		purchaseButton.setFont(Font.font("arial", FontWeight.BOLD, 16));
-		purchaseButton.setPrefWidth(150);
-		
+		purchaseButton.setPrefWidth(150);	
 		purchaseButton.setOnAction(e -> showPurchaseConfirmationPopup());
 		
 		VBox cartButtonLayout = new VBox(10);
@@ -344,135 +340,75 @@ public class BuyerView{
 		return bookItem;
 	}
 	
-		private void showPurchaseConfirmationPopup() {
-		    Stage popupStage = new Stage();
-		    popupStage.setTitle("Confirm Purchase");
-	
-		    GridPane popupLayout = new GridPane();
-		    popupLayout.setHgap(10);
-		    popupLayout.setVgap(15);
-		    popupLayout.setAlignment(Pos.CENTER);
-	
-		    Label message = new Label("Are you sure you want to make this purchase?\n\n"
-		            + "By selecting \"Yes,\" you agree to the terms and will be billed for the total below.\n\n"
-		            + "Selecting \"No\" will close the popup and bring you back to listings and your cart.");
-		    message.setFont(Font.font("Arial", 14));
-		    popupLayout.add(message, 0, 0);
-		    
-		    Label totalLabel = new Label(String.format("GRAND TOTAL: $%.2f", usr.getCart().getTotal()));
-		    totalLabel.setFont(Font.font("Arial", FontWeight.BOLD, 16));
-		    GridPane.setColumnSpan(totalLabel, 2); 
-		    popupLayout.add(totalLabel, 0, 1);
-	
-		    Button yes_Button = new Button("Yes");
-		    yes_Button.setStyle("-fx-background-color: #8C1D40; -fx-text-fill: white;");
-		    yes_Button.setFont(Font.font("Arial", FontWeight.BOLD, 14));
-		    yes_Button.setOnAction(e -> {//FIXME
-		        //Please add code to remove the book from the listing, I dont know which file has this function
-		       
-		        popupStage.close();
-		    });
-		    popupLayout.add(yes_Button, 0, 2);
-	
-		    // Add No button
-		    Button no_Button = new Button("No");
-		    no_Button.setFont(Font.font("Arial", FontWeight.BOLD, 14));
-		    no_Button.setOnAction(e -> {
-		    	popupStage.close();
-		    });
-		    popupLayout.add(no_Button, 1, 2);
-	
-		    Scene popupScene = new Scene(popupLayout, 400, 250);
-		    popupStage.setScene(popupScene);
-		}
-		
-		private void removeFromCartPopUp() { //FIXME set this pop up to proper btn
-			Stage popupStage = new Stage();
-		    popupStage.setTitle("Remove From Cart");
-	
-		    GridPane popupLayout = new GridPane();
-		    popupLayout.setHgap(10);
-		    popupLayout.setVgap(15);
-		    popupLayout.setAlignment(Pos.CENTER);
-		    
-		    Label label1 = new Label("Remove From Cart");
-		    label1.setFont(Font.font("Arial", 15));
-		    popupLayout.add(label1, 0, 0, 2, 1);
-		     
-		    Label label2 = new Label("Are you sure you want to remove from your cart"); //FIXME //Parse the name of the book to delete in
-		    label2.setFont(Font.font("Arial", 13));
-		    popupLayout.add(label2, 0, 1, 2, 1);
-		    
-		    Button yes_Button = new Button("YES");
-		    yes_Button.setPrefWidth(80); 
-		    yes_Button.setStyle("-fx-background-color: RED; -fx-text-fill: white;"); 
-		    popupLayout.add(yes_Button, 0, 2);
-		    yes_Button.setOnAction(e -> {
-		        System.out.println("Purchase confirmed!"); //FIXME
-		        //Please add code to remove the book from the cart, I dont know which file has this function
-		        popupStage.close();
-		    });
+	private void showPurchaseConfirmationPopup() {
+	    // Create the confirmation dialog
+	    Stage popup = new Stage();
+	    popup.setTitle("Purchase Confirmation");
+	    
+	    // Set up the message text
+	    Label confirmationMessage = new Label("Are you sure you want to complete the purchase?");
+	    confirmationMessage.setFont(Font.font("arial", FontWeight.BOLD, 14));
+	    confirmationMessage.setWrapText(true);
+	    confirmationMessage.setPadding(new Insets(10));
+	    
+	    // Create the Yes and No buttons
+	    Button yesButton = new Button("Yes");
+	    yesButton.setStyle("-fx-background-color: #8C1D40; -fx-text-fill: white;");
+	    yesButton.setFont(Font.font("arial", FontWeight.BOLD, 14));
+	    yesButton.setOnAction(e -> {
+	        // Confirm the purchase
+	        completePurchase();
+	        popup.close(); // Close the popup
+	    });
+	    
+	    Button noButton = new Button("No");
+	    noButton.setStyle("-fx-background-color: #9a9a9a; -fx-text-fill: white;");
+	    noButton.setFont(Font.font("arial", FontWeight.BOLD, 14));
+	    noButton.setOnAction(e -> {
+	        // Cancel the purchase
+	        popup.close(); // Close the popup
+	    });
+	    
+	    // Layout for the buttons
+	    HBox buttonLayout = new HBox(10, noButton, yesButton);
+	    buttonLayout.setAlignment(Pos.CENTER);
+	    buttonLayout.setPadding(new Insets(10));
 
-		    Button no_Button = new Button("NO");
-		    no_Button.setPrefWidth(80);
-		    no_Button.setStyle("-fx-background-color: RED; -fx-text-fill: white;");
-		    popupLayout.add(no_Button, 1, 2);
-		    no_Button.setOnAction(e -> {
-		        popupStage.close();
-		    });
-		    
-		    GridPane.setHalignment(yes_Button, HPos.CENTER);
-		    GridPane.setHalignment(no_Button, HPos.CENTER);
+	    // Combine message and buttons into a vertical layout
+	    VBox popupLayout = new VBox(10, confirmationMessage, buttonLayout);
+	    popupLayout.setPadding(new Insets(10));
+	    popupLayout.setStyle("-fx-background-color: white; -fx-border-color: gray; -fx-border-width: 1px;");
+	    popupLayout.setAlignment(Pos.CENTER);
 
-		    Scene popupScene = new Scene(popupLayout, 400, 200); 
-		    popupStage.setScene(popupScene);
-		    popupStage.show();
-			
-		}
-		
-		private void clearCartPopUp() { //FIXME set this pop up to proper btn
-			Stage popupStage = new Stage();
-		    popupStage.setTitle("Clear Cart");
+	    // Set up the scene and stage for the popup
+	    Scene popupScene = new Scene(popupLayout, 300, 150);
+	    popup.setScene(popupScene);
+	    popup.showAndWait(); // Show the popup and wait for user action
+	}
 	
-		    GridPane popupLayout = new GridPane();
-		    popupLayout.setHgap(10);
-		    popupLayout.setVgap(15);
-		    popupLayout.setAlignment(Pos.CENTER);
-		    
-		    Label label1 = new Label("Clear Cart");
-		    label1.setFont(Font.font("Arial", 15));
-		    popupLayout.add(label1, 0, 0, 2, 1);	
-		     
-		    Label label2 = new Label("Are you sure you want to clear your cart"); 
-		    label2.setFont(Font.font("Arial", 13));
-		    popupLayout.add(label2, 0, 1, 2, 1);
-		    
-		    Button yes_Button = new Button("YES");
-		    yes_Button.setPrefWidth(80); 
-		    yes_Button.setStyle("-fx-background-color: RED; -fx-text-fill: white;"); 
-		    popupLayout.add(yes_Button, 0, 2);
-		    yes_Button.setOnAction(e -> {
-		        //FIXME
-		        //Please add code to empty from the cart, I dont know which file has this function
-		        popupStage.close();
-		    });
+	
+	private void completePurchase() {
+	    // Update the quantities of the purchased books and clear the cart
+	    for (Book b : usr.getCart().getBooks()) {
+	        b.changeQuantity(b.getQuantity() - 1); // Reduce quantity of the book
+	        if (b.getQuantity() <= 0) {
+	            sys.getPublishedBooks().remove(b); // Remove book if out of stock
+	        }
+	    }
 
-		    Button no_Button = new Button("NO");
-		    no_Button.setPrefWidth(80);
-		    no_Button.setStyle("-fx-background-color: RED; -fx-text-fill: white;");
-		    popupLayout.add(no_Button, 1, 2);
-		    
-		    no_Button.setOnAction(e -> {
-		        popupStage.close();
-		    });
-		    
-		    GridPane.setHalignment(yes_Button, HPos.CENTER);
-		    GridPane.setHalignment(no_Button, HPos.CENTER);
+	    // Clear the user's cart
+	    usr.setCart(new Cart());
+	    
+	    // Refresh the UI
+	    updateCartCosts(); // Update tax and total labels
+	    ScrollPane cartScrollPane = (ScrollPane) this.scene.lookup("#crt");
+	    cartScrollPane.setContent(cartSetup()); // Refresh cart display
+	    
+	    FlowPane bookList = (FlowPane) this.scene.lookup("#bookList");
+	    bookList.getChildren().clear(); // Clear the current book list
+	    for (Book b : sys.getPublishedBooks()) {
+	        bookList.getChildren().add(createBookItem(b)); // Rebuild the book list
+	    }
+	}
 
-		    Scene popupScene = new Scene(popupLayout, 400, 200); 
-		    popupStage.setScene(popupScene);
-		    popupStage.show();
-			
-		}
-		
 }
