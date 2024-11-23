@@ -311,4 +311,4 @@ public class BuyerView extends Application
 	{
 		launch(args);
 	}
-}
+}//end
