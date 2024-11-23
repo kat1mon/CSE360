@@ -1,6 +1,4 @@
 
-
-
 import java.util.ArrayList;
 
 import javafx.application.Platform;
@@ -8,7 +6,6 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
@@ -26,6 +23,7 @@ public class SellerView {
 	private Main app;
 	BookSystem sys;
 	User usr;
+	private ToggleGroup g;
 	
     private Scene scene; // Store the Scene object
 
@@ -40,7 +38,7 @@ public class SellerView {
     private VBox scrlSetup() {
     	VBox list = new VBox(20);
         
-    	ToggleGroup g = new ToggleGroup();
+    	g = new ToggleGroup();
     	
         for(Book b : usr.getListings()) {
         	RadioButton n = new RadioButton(
@@ -51,6 +49,7 @@ public class SellerView {
         			"Condition: " + b.getCondition() + "\n" +
         			"Selling: " + b.getQuantity() + "\n"
         	);
+        	n.setUserData(b);
         	n.setToggleGroup(g);
         	list.getChildren().add(n);
         }
@@ -86,6 +85,7 @@ public class SellerView {
         log_out_Button.setLayoutX(650);
         log_out_Button.setLayoutY(10);
         pane.getChildren().add(log_out_Button);
+        log_out_Button.setOnAction(event -> app.showLoginView());
         
         Pane inner = createInner();
         inner.setLayoutX(50);
@@ -94,6 +94,7 @@ public class SellerView {
         pane.getChildren().add(inner);
         
         return pane;
+        
     }
     
     private Pane createInner() {
@@ -245,16 +246,9 @@ public class SellerView {
 		delete_Btn.setPrefHeight(50);
 		result.getChildren().add(delete_Btn);
 		delete_Btn.setOnAction(event -> {
-			Book b = new Book(Book_name_textfield.getText(), 
-					author_name_textField.getText(), 
-					publication_date_textField.getText(), 
-					category_groupOption.getSelectionModel().getSelectedItem(), 
-					condition_groupOption.getSelectionModel().getSelectedItem(),
-					Double.parseDouble(price_textField.getText()),
-					Integer.parseInt((quantity_textField.getText())),
-					usr.getEmail());
+			Book b = (Book) g.getSelectedToggle().getUserData();
 			
-			confirm_user_window(b);
+			deleted_window(b);
 		});
 		
 		return result;
@@ -410,8 +404,7 @@ public class SellerView {
         
     }
   
-
-  /*private void deleted_window(Book selection) {
+   private void deleted_window(Book selection) {
             Stage deletionStage = new Stage();
             Pane pane = new Pane();
             pane.setPrefSize(400, 400);
@@ -433,37 +426,37 @@ public class SellerView {
             detailsPane.setLayoutY(100);
             pane.getChildren().add(detailsPane);
 
-            Label bookNameText = new Label(bookName);
+            Label bookNameText = new Label(selection.getTitle());
             bookNameText.setLayoutX(70);
             bookNameText.setLayoutY(10);
             detailsPane.getChildren().add(bookNameText);
 
-            Label authorText = new Label(String.format("Author: %s", authorName));
+            Label authorText = new Label(String.format("Author: %s", selection.getAuthor()));
             authorText.setLayoutX(80);
             authorText.setLayoutY(25);
             detailsPane.getChildren().add(authorText);
 
-            Label yearText = new Label(String.format("Published: %d", publication_year));
+            Label yearText = new Label(String.format("Published: %s", selection.getDate()));
             yearText.setLayoutX(80);
             yearText.setLayoutY(40);
             detailsPane.getChildren().add(yearText);
 
-            Label categoryText = new Label(String.format("Category: %s", category));
+            Label categoryText = new Label(String.format("Category: %s", selection.getCategory()));
             categoryText.setLayoutX(80);
             categoryText.setLayoutY(55);
             detailsPane.getChildren().add(categoryText);
 
-            Label conditionText = new Label(String.format("Condition: %s", condition));
+            Label conditionText = new Label(String.format("Condition: %s", selection.getCondition()));
             conditionText.setLayoutX(80);
             conditionText.setLayoutY(70);
             detailsPane.getChildren().add(conditionText);
 
-            Label priceText = new Label(String.format("Price: $ %.2f", price));
+            Label priceText = new Label(String.format("Price: $ %.2f", selection.getPrice()));
             priceText.setLayoutX(80);
             priceText.setLayoutY(85);
             detailsPane.getChildren().add(priceText);
 
-            Label quantityText = new Label(String.format("Quantity: %d", quantity));
+            Label quantityText = new Label(String.format("Quantity: %d", selection.getQuantity()));
             quantityText.setLayoutX(80);
             quantityText.setLayoutY(100);
             detailsPane.getChildren().add(quantityText);
@@ -483,25 +476,16 @@ public class SellerView {
             deletionStage.show();
 
             yesButton.setOnAction(e -> {
-                String deleted_book = String.format(
-                    "%s\nAuthor: %s\nPublished: %d\nCategory: %s\nCondition: %s\nSelling: %d\n",
-                    bookName, authorName, publication_year, category, condition, quantity, price
-                );
-                listings.remove(deleted_book);
-
-                Book deletedBook = new Book(bookName, authorName, publication_year, category, condition, quantity, price);
-                if (deletedBook != null) {
-                    book_arr.remove(deletedBook);
-                }
+                usr.getListings().remove(selection);
+                sys.getPublishedBooks().remove(selection);
                 deletionStage.close();
             });
 
             noButton.setOnAction(e -> {
                 deletionStage.close();
             });
+   }
             
-        }*/
-
     // Method to return the Scene
     public Scene getScene() {
     	return setupScene();
