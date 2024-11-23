@@ -1,3 +1,4 @@
+package application;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -126,6 +127,26 @@ public class BuyerView{
 		this.usr.setCart(new Cart());
 		ScrollPane s = (ScrollPane) this.scene.lookup("#crt");
 		s.setContent(cartSetup());
+		
+		// JUST ADDED
+		FlowPane bookList = (FlowPane) this.scene.lookup("#bookList");		// located bookList FlowPane
+		
+		// iterate through all children in bookList
+		for (javafx.scene.Node node : bookList.getChildren()) {
+			// grab each child
+			if (node instanceof VBox) {
+				VBox bookItem = (VBox) node;
+				
+				// find "Add to Cart" button in each child
+				for (javafx.scene.Node child : bookItem.getChildren()) {
+					// look for add to cart button
+					if (child instanceof Button) {
+						Button addToCartButton = (Button) child;		// grab "Add to Cart" button
+						addToCartButton.setDisable(false);				// re-enable 
+					}
+				}
+			}
+		}
 	}
 	
 	private GridPane cartSetup() {
