@@ -29,7 +29,10 @@ public class LoginView {
 	}
 	
 	private Scene setupScene() {
+		//Text title = new Text("Book Nook");
 		Text title = new Text("Book Nook");
+		title.setFont(Font.font("Lucida Fax", FontWeight.BOLD, 42));
+		title.setFill(Color.web("#FFD700"));
 		// Drop-down menu for User-Type/mode Selection
 		ComboBox<String> modeCombo = new ComboBox<>();
 		modeCombo.getItems().addAll("Buying", "Selling");
@@ -138,18 +141,12 @@ public class LoginView {
 					
 					if (selectedMode != null && selected != null && selected.checkPassword(pW)) 
 					{
-						switch (selectedMode) 
-						{
-							case "Buying":
-								System.out.println("Test1");
-								//redirectScreen("Buying");
-							case "Selling":
-								System.out.println("CONFIRMED");
-								redirectScreen("Selling", selected);
-								//openSellingPage(primaryStage);
-								break;
-							default:
-								System.out.println("Error: Invalid Mode Selection.");
+						if(selectedMode == "Buying") {
+							redirectScreen("Buying", selected);
+						}else if(selectedMode == "Selling") {
+							redirectScreen("Selling", selected);
+						}else {
+							System.out.println("Error: Invalid Mode Selection.");
 						}
 					}
 				});
@@ -160,6 +157,8 @@ public class LoginView {
 	private Scene redirectScreen(String screen, User u) {
 		if(screen == "Selling") {
 			app.showSellerView(u);
+		}else if(screen == "Buying") {
+			app.showBuyerView(u);
 		}
 		return null;
 	}

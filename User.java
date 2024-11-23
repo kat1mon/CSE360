@@ -24,6 +24,28 @@ public class User {
 		//this.sys = s;
 	}
 	
+	public User(String e, String p, boolean[] r, ArrayList<Book> l, Cart c, ArrayList<Order> o) {
+		this.asuEmail = e;
+		this.password = p;
+		this.roles = r;
+		this.userListings = l;
+		this.userCart = c;
+		this.recentOrders = o;
+	}
+	
+	/*public String getRoles() {
+		String res = "";
+		if(roles[0]) {
+			res += "true,";
+		}else {
+			res += "false,";
+		}
+	}*/
+	
+	public String getPassword() {
+		return this.password;
+	}
+	
 	public void setListings(ArrayList<Book> l) {
 		this.userListings = l;
 	}

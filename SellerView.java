@@ -1,7 +1,8 @@
 
 import java.util.ArrayList;
 
-import javafx.application.Platform;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -16,7 +17,10 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 public class SellerView {
@@ -24,15 +28,18 @@ public class SellerView {
 	BookSystem sys;
 	User usr;
 	private ToggleGroup g;
+	private Stage primaryStage;
 	
     private Scene scene; // Store the Scene object
 
     
-    public SellerView(BookSystem s, Main a, User u) {
+    public SellerView(BookSystem s, Main a, User u, Stage primary) {
     	this.app = a;
     	this.sys = s;
     	this.usr = u;
+    	this.primaryStage = primary;
     	scene = setupScene();
+    	primaryStage.setScene(scene);
     }
     
     private VBox scrlSetup() {
@@ -63,27 +70,32 @@ public class SellerView {
         pane.setStyle("-fx-background-color: darkred;");
         
         // Book Nook label
-        Label bookNook = new Label("Book Nook");
-        bookNook.setStyle("-fx-background-color: Yellow");
-        bookNook.setFont(new Font("Arial", 24)); 
-        bookNook.setLayoutX(10); 
-        bookNook.setLayoutY(10); 
-        pane.getChildren().add(bookNook);
+        Text title = new Text("Book Nook");
+		title.setFont(Font.font("Lucida Fax", FontWeight.BOLD, 36));
+		title.setFill(Color.web("#FFD700"));
+        title.setLayoutX(50); 
+        title.setLayoutY(60); 
+        pane.getChildren().add(title);
         
         //Your Account Button
         Button your_account_btn = new Button("Your Account");
-        your_account_btn.setPrefWidth(100); 
-        your_account_btn.setPrefHeight(20);
-        your_account_btn.setLayoutX(500);
-        your_account_btn.setLayoutY(10);
+        your_account_btn.setPrefWidth(150); 
+        your_account_btn.setPrefHeight(40);
+        your_account_btn.setLayoutX(350);
+        your_account_btn.setLayoutY(30);
+        your_account_btn.setStyle("-fx-background-color: #9a9a9a; -fx-text-fill: white;");
+		your_account_btn.setFont(Font.font("arial", FontWeight.BOLD, 16));
         pane.getChildren().add(your_account_btn);
         
+        
         //Logout Button
-        Button log_out_Button = new Button("Log Out");
-        log_out_Button.setPrefWidth(100); 
-        log_out_Button.setPrefHeight(20);
-        log_out_Button.setLayoutX(650);
-        log_out_Button.setLayoutY(10);
+        Button log_out_Button = new Button("Logout");
+        log_out_Button.setStyle("-fx-background-color: #9a9a9a; -fx-text-fill: white;");
+        log_out_Button.setPrefWidth(150); 
+        log_out_Button.setPrefHeight(40);
+        log_out_Button.setLayoutX(550);
+        log_out_Button.setLayoutY(30);
+        log_out_Button.setFont(Font.font("arial", FontWeight.BOLD, 16));
         pane.getChildren().add(log_out_Button);
         log_out_Button.setOnAction(event -> app.showLoginView());
         
@@ -178,7 +190,7 @@ public class SellerView {
     		condition_groupOption.setPrefWidth(200);
     		condition_groupOption.setId("conField");
     		form.add(condition_groupOption, 1, 4);
-    		
+   
     		Label quantity = new Label("Quantity:");
     		quantity.setFont(new Font("Arial", 16));
     		form.add(quantity, 0, 5);
@@ -356,53 +368,55 @@ public class SellerView {
         confirmationStage.show();
         
         
-        yes_btn.setOnAction(e -> {
-        	//THIS ISNT UPDATING THE MAIN SELLER VIEW. HELP!!
-        	System.out.println("YES SELECTED");
-        	this.sys.addBook(b);
-        	ArrayList<Book> l = this.usr.getListings();
-        	l.add(b);
-        	this.usr.setListings(l);
-            
-            Platform.runLater(() -> {
-            	TextField title = (TextField) this.scene.lookup("#bookField");
-                title.clear();
-                
-                TextField author = (TextField) this.scene.lookup("#authorField");
-                author.clear();
-
-                TextField pub = (TextField) this.scene.lookup("#pubField");
-                pub.clear();
-                
-                @SuppressWarnings("unchecked")
-    			ComboBox<String> cat = (ComboBox<String>) this.scene.lookup("#catField");
-                cat.getSelectionModel().clearSelection();
-                
-                @SuppressWarnings("unchecked")
-    			ComboBox<String> con = (ComboBox<String>) this.scene.lookup("#conField");
-                con.getSelectionModel().clearSelection();
-                
-                TextField quan = (TextField) this.scene.lookup("#quanField");
-                quan.clear();
-                
-                TextField price = (TextField) this.scene.lookup("#priceField");
-                price.clear();
-                
-                ScrollPane scrl = (ScrollPane) this.scene.lookup("#scroll");
-                if(scrl == null) {
-                	System.out.println("ERR: SCRL IS NULL");
-                }
-                scrl.setContent(scrlSetup());
-            });
-            
-            confirmationStage.close();
-        });
+        EventHandler<ActionEvent> confirm = new EventHandler<ActionEvent>() {
+        	public void handle(ActionEvent e) {
+        		confirmListing(b);	
+        		confirmationStage.close();
+        	}
+        };
+        
+        yes_btn.setOnAction(confirm);
         
         no_btn.setOnAction(e -> {
         	confirmationStage.close();
         });
         
     }
+
+   private void confirmListing(Book b) {
+	   sys.addBook(b);
+	   ArrayList<Book> l = this.usr.getListings();
+   	   l.add(b);
+   	   this.usr.setListings(l);
+   	   
+   	   TextField title = (TextField) this.scene.lookup("#bookField");
+   	   title.clear();
+    
+   	   TextField author = (TextField) this.scene.lookup("#authorField");
+   	   author.clear();
+
+   	   TextField pub = (TextField) this.scene.lookup("#pubField");
+   	   pub.clear();
+    
+   	   @SuppressWarnings("unchecked")
+   	   ComboBox<String> cat = (ComboBox<String>) this.scene.lookup("#catField");
+   	   cat.getSelectionModel().clearSelection();
+    
+   	   @SuppressWarnings("unchecked")
+   	   ComboBox<String> con = (ComboBox<String>) this.scene.lookup("#conField");
+   	   con.getSelectionModel().clearSelection();
+    
+   	   TextField quan = (TextField) this.scene.lookup("#quanField");
+   	   quan.clear();
+    
+   	   TextField price = (TextField) this.scene.lookup("#priceField");
+   	   price.clear();
+   	   
+   	   ScrollPane s = (ScrollPane) this.scene.lookup("#scroll");
+   	   s.setContent(scrlSetup());
+   	   
+   	   primaryStage.setScene(scene);
+   }
   
    private void deleted_window(Book selection) {
             Stage deletionStage = new Stage();
@@ -474,16 +488,28 @@ public class SellerView {
             Scene deletionScene = new Scene(pane, 400, 400);
             deletionStage.setScene(deletionScene);
             deletionStage.show();
+            
+            EventHandler<ActionEvent> confirm = new EventHandler<ActionEvent>() {
+            	public void handle(ActionEvent e) {
+            		removeBook(selection);
+            		deletionStage.close();
+            	}
+            };
 
-            yesButton.setOnAction(e -> {
-                usr.getListings().remove(selection);
-                sys.getPublishedBooks().remove(selection);
-                deletionStage.close();
-            });
+            yesButton.setOnAction(confirm);
 
             noButton.setOnAction(e -> {
                 deletionStage.close();
             });
+   }
+   
+   private void removeBook(Book selection) {
+	   usr.getListings().remove(selection);
+		sys.getPublishedBooks().remove(selection);
+		
+		ScrollPane s = (ScrollPane) this.scene.lookup("#scroll");
+		s.setContent(scrlSetup());
+		primaryStage.setScene(scene);
    }
             
     // Method to return the Scene

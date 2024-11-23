@@ -14,6 +14,10 @@ public class BookSystem {
 		//use file to load tax percent
 	}
 	
+	public HashMap<String, User> getUsers(){
+		return usersList;
+	}
+	
 	public User getUser(String email) {
 		if(usersList.containsKey(email)) {
 			return usersList.get(email);
