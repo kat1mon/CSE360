@@ -125,6 +125,7 @@ public class BuyerView{
 	
 	private void clearCart() {
 		this.usr.setCart(new Cart());
+		updateCartCosts();
 		ScrollPane s = (ScrollPane) this.scene.lookup("#crt");
 		s.setContent(cartSetup());
 		
@@ -178,6 +179,7 @@ public class BuyerView{
 		cartLabel.setFont(Font.font("arial", FontWeight.BOLD, 20));
 		tx = new Label(String.format("Tax (8.1%%):\t\t\t$%.2f", usr.getCart().getTax()));
 		tx.setFont(Font.font("arial", FontWeight.BOLD, 16));
+		tx.setText(String.format("Tax (8.1%%):\t\t\t$%.2f", usr.getCart().getTax()));
 		//taxLabel.setId("tax");
 		to = new Label(String.format("Total:\t\t\t\t$%.2f", usr.getCart().getTotal()));
 		//taxLabel.setId("total");
@@ -388,26 +390,21 @@ public class BuyerView{
 	
 	
 	private void completePurchase() {
-	    // Update the quantities of the purchased books and clear the cart
 	    for (Book b : usr.getCart().getBooks()) {
-	        b.changeQuantity(b.getQuantity() - 1); // Reduce quantity of the book
+	        b.changeQuantity(b.getQuantity() - 1); // Reduce quantity
 	        if (b.getQuantity() <= 0) {
 	            sys.getPublishedBooks().remove(b); // Remove book if out of stock
 	        }
 	    }
-
-	    // Clear the user's cart
-	    usr.setCart(new Cart());
-	    
-	    // Refresh the UI
-	    updateCartCosts(); // Update tax and total labels
+	    usr.setCart(new Cart());       // Clear the cart after purchase
+	    updateCartCosts();             // Update the cart costs (now zero)
 	    ScrollPane cartScrollPane = (ScrollPane) this.scene.lookup("#crt");
-	    cartScrollPane.setContent(cartSetup()); // Refresh cart display
-	    
+	    cartScrollPane.setContent(cartSetup()); // Refresh cart UI
+
 	    FlowPane bookList = (FlowPane) this.scene.lookup("#bookList");
-	    bookList.getChildren().clear(); // Clear the current book list
+	    bookList.getChildren().clear(); // Clear and refresh the book list
 	    for (Book b : sys.getPublishedBooks()) {
-	        bookList.getChildren().add(createBookItem(b)); // Rebuild the book list
+	        bookList.getChildren().add(createBookItem(b));
 	    }
 	}
 
