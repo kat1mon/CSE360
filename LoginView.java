@@ -1,3 +1,5 @@
+package application;
+
 import javafx.beans.binding.Bindings;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -8,6 +10,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
@@ -18,6 +21,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import javafx.scene.control.ButtonType;
 
 public class LoginView {
 	private Main app;
@@ -145,6 +149,29 @@ public class LoginView {
 						
 						Alert alert = new Alert(AlertType.ERROR);
 						alert.setTitle("ERROR!");
+						
+						alert.setHeaderText(null);		// clear default header text
+						alert.setGraphic(null);			// clear default icon
+						
+						DialogPane dialogPane = alert.getDialogPane();
+						dialogPane.setStyle(
+								"-fx-background-color: white;" +
+								"-fx-border-color: #8C1D40;" +
+								"-fx-border-radius: 10;" +
+								"-fx-background-radius: 10;"
+						);
+						dialogPane.lookup(".content.label").setStyle(
+								"-fx-font-size: 16px;" +
+								"-fx-text-fill: #822433;" +
+								"-fx-alignment: center;"
+						);
+						dialogPane.lookupButton(ButtonType.OK).setStyle(
+								"-fx-background-color: #8C1D40;" +
+								"-fx-text-fill: white;" +
+								"-fx-font-weight: bold;"
+						);
+										
+						
 						if(selected == null) {
 							alert.setContentText("USER NOT FOUND");
 							alert.showAndWait();
