@@ -1,4 +1,6 @@
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Random;
 
 public class Buyer extends User{
 	private ArrayList<Book> selectedList;
@@ -12,20 +14,10 @@ public class Buyer extends User{
 		return this.selectedList;
 	}
 	
-	public void filterSelection(String param) {
-		//this will be for front end
-	}
-	
 	public void AddToCart(Book b) {
 		this.getCart().addBook(b);
 	}
 	
-	public void purchaseCart() {
-		Order newOrder = new Order();
-		this.getOrders().add(newOrder);
-		this.selectedList.clear();
-		this.getCart().clearCart();
-	}
 	
 	public void removeFromCart(Book b) {
 		this.getCart().remove_Book(b);

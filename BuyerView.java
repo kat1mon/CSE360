@@ -1,4 +1,3 @@
-package application;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -23,8 +22,6 @@ public class BuyerView{
 	private Scene scene;
 	private Label tx;
 	private Label to;
-	
-	// declares variables to be used in other methods
 
 	public BuyerView(BookSystem s, Main a, User u, Stage primary) {
 		this.sys = s;
@@ -35,6 +32,10 @@ public class BuyerView{
 		primaryStage.setScene(scene);
 	}
 	
+	private void showAccountView() {
+    	new AccountView(sys, app, usr, primaryStage, "Buyer");
+    }
+	
 	private HBox createTopBar() {
 		Text title = new Text("Book Nook");
 		title.setFont(Font.font("Lucida Fax", FontWeight.BOLD, 30));
@@ -44,6 +45,7 @@ public class BuyerView{
 		accountButton.setStyle("-fx-background-color: #9a9a9a; -fx-text-fill: white;");
 		accountButton.setFont(Font.font("arial", FontWeight.BOLD, 16));
 		accountButton.setPrefWidth(150);
+		accountButton.setOnAction(e -> showAccountView());
 		
 		Button logoutButton = new Button("Logout");
 		logoutButton.setStyle("-fx-background-color: #9a9a9a; -fx-text-fill: white;");
@@ -73,12 +75,7 @@ public class BuyerView{
 				"-fx-padding: 5 10;" +
 				"-fx-font-size: 14px;"
 		);
-		EventHandler<ActionEvent> filterCat = new EventHandler<ActionEvent>() {
-			public void handle(ActionEvent e) {
-				updateBookList(categoryCombo.getSelectionModel().getSelectedItem(), "cat");
-			}
-		};
-		categoryCombo.setOnAction(filterCat);
+		
 		
 		ComboBox<String> conditionCombo = new ComboBox<>();
 		conditionCombo.getItems().addAll("All Conditions", "Like New", "Moderately Used", "Heavily Used");
@@ -91,11 +88,20 @@ public class BuyerView{
 				"-fx-padding: 5 10;" +
 				"-fx-font-size: 14px;"
 		);
+		
 		EventHandler<ActionEvent> filterCon = new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent e) {
-				updateBookList(conditionCombo.getSelectionModel().getSelectedItem(), "con");
+				updateBookList(categoryCombo.getSelectionModel().getSelectedItem(), conditionCombo.getSelectionModel().getSelectedItem());
 			}
 		};
+		
+		EventHandler<ActionEvent> filterCat = new EventHandler<ActionEvent>() {
+			public void handle(ActionEvent e) {
+				updateBookList(categoryCombo.getSelectionModel().getSelectedItem(), conditionCombo.getSelectionModel().getSelectedItem());
+			}
+		};
+		
+		categoryCombo.setOnAction(filterCat);
 		conditionCombo.setOnAction(filterCon);
 		
 		HBox filterOptionsLayout = new HBox(10);
@@ -130,24 +136,24 @@ public class BuyerView{
 		s.setContent(cartSetup());
 		
 		// JUST ADDED
-		FlowPane bookList = (FlowPane) this.scene.lookup("#bookList");		// located bookList FlowPane
-		
-		// iterate through all children in bookList
-		for (javafx.scene.Node node : bookList.getChildren()) {
-			// grab each child
-			if (node instanceof VBox) {
-				VBox bookItem = (VBox) node;
+				FlowPane bookList = (FlowPane) this.scene.lookup("#bookList");		// located bookList FlowPane
 				
-				// find "Add to Cart" button in each child
-				for (javafx.scene.Node child : bookItem.getChildren()) {
-					// look for add to cart button
-					if (child instanceof Button) {
-						Button addToCartButton = (Button) child;		// grab "Add to Cart" button
-						addToCartButton.setDisable(false);				// re-enable 
+				// iterate through all children in bookList
+				for (javafx.scene.Node node : bookList.getChildren()) {
+					// grab each child
+					if (node instanceof VBox) {
+						VBox bookItem = (VBox) node;
+						
+						// find "Add to Cart" button in each child
+						for (javafx.scene.Node child : bookItem.getChildren()) {
+							// look for add to cart button
+							if (child instanceof Button) {
+								Button addToCartButton = (Button) child;		// grab "Add to Cart" button
+								addToCartButton.setDisable(false);				// re-enable 
+							}
+						}
 					}
 				}
-			}
-		}
 	}
 	
 	private GridPane cartSetup() {
@@ -160,6 +166,7 @@ public class BuyerView{
 			Button x = new Button("X");
 			x.setMaxSize(2, 2);
 			cartListView.add(x, 0, i);
+			
 			Label l = new Label(b.getTitle());
 			l.setFont(Font.font("Arial", FontWeight.BOLD, 16));
 			cartListView.add(l, 1, i);
@@ -179,10 +186,7 @@ public class BuyerView{
 		cartLabel.setFont(Font.font("arial", FontWeight.BOLD, 20));
 		tx = new Label(String.format("Tax (8.1%%):\t\t\t$%.2f", usr.getCart().getTax()));
 		tx.setFont(Font.font("arial", FontWeight.BOLD, 16));
-		tx.setText(String.format("Tax (8.1%%):\t\t\t$%.2f", usr.getCart().getTax()));
-		//taxLabel.setId("tax");
 		to = new Label(String.format("Total:\t\t\t\t$%.2f", usr.getCart().getTotal()));
-		//taxLabel.setId("total");
 		to.setFont(Font.font("arial", FontWeight.BOLD, 16));
 		
 		ScrollPane scrl = new ScrollPane();
@@ -235,9 +239,6 @@ public class BuyerView{
 		centerSectionLayout.setStyle("-fx-background-color: white; -fx-border-color: #F9C43A; -fx-border-radius: 20; -fx-background-radius: 20; -fx-border-width: 1px");
 		centerSectionLayout.getChildren().addAll(filterBar, bookList);
 		
-		
-		
-		// root layout
 		BorderPane root = new BorderPane();
 		root.setStyle("-fx-background-color: #8C1D40;");
 		root.setPadding(new Insets(10));
@@ -245,40 +246,28 @@ public class BuyerView{
 		root.setCenter(centerSectionLayout);
 		root.setRight(cartList);
 		
-		// scene and stage
 		return new Scene(root, 800, 700);
 	}
 	
-	private void updateBookList(String val, String fil)
+	private void updateBookList(String cat, String con)
 	{
 		FlowPane booklist = (FlowPane) this.scene.lookup("#bookList");
 		booklist.getChildren().clear();
 		booklist.setPadding(new Insets(5));
 		booklist.setPrefWrapLength(600);
 		
-		if(fil == "cat") {
-			for(Book b : sys.getPublishedBooks()) {
-				if(b.getCategory() == val) {
-					booklist.getChildren().add(createBookItem(b));
-				}
-			}
-		}else if(fil == "con") {
-			for(Book b : sys.getPublishedBooks()) {
-				if(b.getCondition() == val) {
-					booklist.getChildren().add(createBookItem(b));
-				}
+		for(Book b : sys.getPublishedBooks()) {
+			if((b.getCategory().equals(cat) || cat.equals("All Categories")) 
+					&& 
+				(b.getCondition().equals(con) || con.equals("All Conditions")
+			)) {
+				booklist.getChildren().add(createBookItem(b));
 			}
 		}
 	}
 	
 	private void updateCartCosts()
 	{
-//		cartTax = cartTotal * TAX_RATE;
-//		cartTotalWithTax = cartTotal + cartTax;
-		
-		/*tx = (Label) this.scene.lookup("#tax");
-		to = (Label) this.scene.lookup("#total");*/
-		
 		tx.setText(String.format("Tax (8.1%%):\t\t\t$%.2f", usr.getCart().getTax()));
 		to.setText(String.format("Total:\t\t\t\t$%.2f", usr.getCart().getTotal()));
 		
@@ -388,7 +377,6 @@ public class BuyerView{
 	    popup.showAndWait(); // Show the popup and wait for user action
 	}
 	
-	
 	private void completePurchase() {
 	    for (Book b : usr.getCart().getBooks()) {
 	        b.changeQuantity(b.getQuantity() - 1); // Reduce quantity
@@ -396,6 +384,7 @@ public class BuyerView{
 	            sys.getPublishedBooks().remove(b); // Remove book if out of stock
 	        }
 	    }
+	    usr.purchaseCart();
 	    usr.setCart(new Cart());       // Clear the cart after purchase
 	    updateCartCosts();             // Update the cart costs (now zero)
 	    ScrollPane cartScrollPane = (ScrollPane) this.scene.lookup("#crt");

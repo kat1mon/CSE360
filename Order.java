@@ -20,7 +20,14 @@ public class Order {
     
     
     public Order(int n, String d, double to, double ta, ArrayList<String> t, boolean b) {
-    	
+    	this.orderNumber = n;
+    	this.orderDate = d;
+    	this.totalCost = to;
+        this.tax = ta;
+        this.titles = "";
+        for(String s : t) {
+        	titles += s;
+        }
     }
     
     public int getNumber() {

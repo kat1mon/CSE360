@@ -1,13 +1,18 @@
 
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
@@ -211,35 +216,36 @@ public class AccountView{
         VBox.setVgrow(scrl, Priority.ALWAYS);
         
         //scrl.setVmax(400);
-        scrl.setPrefSize(250, 230);;
+        scrl.setPrefSize(250, 300);;
         scrl.setContent(scrlSetup());
         scrl.setId("scroll");
 
         result.getChildren().add(scrl);
-        
-        Button delete_Btn = new Button("Delete");
-		delete_Btn.setPrefWidth(200);
-		delete_Btn.setPrefHeight(50);
-		result.getChildren().add(delete_Btn);
-		delete_Btn.setOnAction(event -> {
-		Book b = (Book) g.getSelectedToggle().getUserData();
-
-		});
 		
 		return result;
     }
 
     private void changingPassword(){
-        Label changeLabel = new Label("Change Label");
+    	Stage changePassword = new Stage();
+    	
+    	VBox v = new VBox(10);
+    	v.setAlignment(Pos.CENTER);
+    	
+        Label changeLabel = new Label("Change Password");
         changeLabel.setFont(new Font("Arial", 36)); 
+        v.getChildren().add(changeLabel);
         
+        HBox btn = new HBox(5);
+        btn.setPadding(new Insets(0, 0, 0, 100));
         Button submitButton = new Button("Submit");
+        Button cancelButton = new Button("Cancel");
+        cancelButton.setOnAction(event -> changePassword.close());
         //dialog.getDialogPane().getButtonTypes().addAll(submitButton, ButtonType.CANCEL);
 
         GridPane grid = new GridPane();
+        grid.setPadding(new Insets(0, 0, 0, 60));
         grid.setHgap(10);
         grid.setVgap(10);
-        grid.setPadding(new Insets(20, 150, 10, 10));
 
         PasswordField oldPassword = new PasswordField();
         PasswordField newPassword = new PasswordField();
@@ -251,6 +257,34 @@ public class AccountView{
         grid.add(newPassword, 1, 1);
         grid.add(new Label("Retype Password:"), 0, 2);
         grid.add(retypePassword, 1, 2);
+        
+        EventHandler<ActionEvent> submit = new EventHandler<ActionEvent>() {
+			public void handle(ActionEvent arg0) {
+				Alert alert = new Alert(AlertType.ERROR);
+				alert.setTitle("ERROR!");
+				if(usr.getPassword() == oldPassword.getText()) {
+					if(newPassword.getText() == retypePassword.getText()) {
+						usr.changePassword(retypePassword.getText());
+						changePassword.close();
+					}else {
+					    alert.setContentText("New password and retype don't match!");
+					    alert.showAndWait();
+					}
+				}else {
+					alert.setContentText("Old password incorrect");
+					alert.showAndWait();
+				}
+			}
+        };
+        
+        submitButton.setOnAction(submit);
+        btn.getChildren().add(submitButton);
+        btn.getChildren().add(cancelButton);
+        v.getChildren().add(grid);
+        v.getChildren().add(btn);
+        Scene passwordScene = new Scene(v, 400, 400);
+        changePassword.setScene(passwordScene);
+        changePassword.show();
 
         //dialog.getDialogPane().setContent(grid);
     }

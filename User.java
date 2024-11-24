@@ -1,7 +1,9 @@
+import java.time.LocalDate;
 import java.util.ArrayList;
 //import *.Cart;
 //import *.Book;
 //import *.Order;
+import java.util.Random;
 
 public class User {
 	private String asuEmail;
@@ -100,4 +102,10 @@ public class User {
 		return this.userListings;
 	}
 	
+	public void purchaseCart() {
+		Random rand = new Random();
+		Order newOrder = new Order(1000 + rand.nextInt(9000), "" + LocalDate.now(), this.getCart().getTotal(), this.getCart().getTax(), this.getCart().books);
+		this.getOrders().add(newOrder);
+		this.getCart().clearCart();
+	}
 }

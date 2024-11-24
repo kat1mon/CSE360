@@ -36,10 +36,7 @@ public class Main extends Application{
 	}
 	
 	public static void main(String[] args) {
-		boolean[] r = {true, true};
-		
-		readFiles();
-		
+		/*boolean[] r = {true, true};
 		User DEBUG = new User("beep", "boop", r);
 		ArrayList<Book> l = new ArrayList<>();
 		l.add(new Book("bip", "bop", "2000", "Math", "Like New", 12.05, 2, "DEBUG"));
@@ -47,133 +44,197 @@ public class Main extends Application{
 		DEBUG.setListings(l);
 		sys.getPublishedBooks().add(new Book("bip", "bop", "2000", "Math", "Like New", 12.05, 2, "DEBUG"));
 		sys.getPublishedBooks().add(new Book("boop", "bippy", "2000", "Math", "Like New", 12.05, 2, "DEBUG"));
-		sys.addUser(DEBUG);
+		sys.addUser(DEBUG);*/
+		readFiles();
 		launch(args);
 		updateFiles();
 	}
 	
-	//FIXME
 	private static void readFiles() {
 		try {
+			boolean[] r = {true, true};
 			Scanner usrScanner = new Scanner(new File("PhaseIII/Files/users.txt"));
 			while(usrScanner.hasNextLine()) {
 				String email = usrScanner.nextLine();
 				String pW;
-				ArrayList<Book> books = new ArrayList<Book>();
+				ArrayList<Book> books = new ArrayList<>();
 				Cart crt = new Cart();
-				ArrayList<Order> orders = new ArrayList<Order>();
+				ArrayList<Order> orders = new ArrayList<>();
 				Scanner individual = new Scanner(new File("PhaseIII/Files/" + email + "/info.txt"));
+				
+				// Read password
 				pW = individual.nextLine();
-
-				while(individual.nextLine() != "END OF LISTINGS") {
-					String title = individual.nextLine();
-					String author = individual.nextLine();
-					String date = individual.nextLine();
-					String cat = individual.nextLine();
-					String con = individual.nextLine();
-					double price = Double.parseDouble(individual.nextLine());
-					int quan = Integer.parseInt(individual.nextLine());
-					
-					Book b = new Book(title, author, date, cat, con, price, quan, email);
-					books.add(b);
-					sys.addBook(b);
-				}
 				
-				while(individual.nextLine() != "END OF CART") {
-					int num = Integer.parseInt(individual.nextLine());
-					String date = individual.nextLine();
-					while(individual.nextLine() != "}") {
-						
+				while (true) {
+					String n = individual.nextLine();
+					if(n.equals("END OF LISTINGS")) {
+						break;
+					}else {
+						String title = n;
+						String author = individual.nextLine();
+						String date = individual.nextLine();
+						String cat = individual.nextLine();
+						String con = individual.nextLine();
+						double price = Double.parseDouble(individual.nextLine());
+						int quan = Integer.parseInt(individual.nextLine());
+						Book b = new Book(title, author, date, cat, con, price, quan, email);
+						books.add(b);
+						sys.addBook(b);
 					}
 				}
 				
-				User usr = new User();
+				// Read Cart details
+				crt.price = Double.parseDouble(individual.nextLine());
+				crt.tax = Double.parseDouble(individual.nextLine());
+				ArrayList<Book> cB = new ArrayList<>();
+				while (true) {
+					String n = individual.nextLine();
+					if(n.equals("END OF CART")) {
+						break;
+					}else {
+						String title = n;
+						String author = individual.nextLine();
+						String date = individual.nextLine();
+						String cat = individual.nextLine();
+						String con = individual.nextLine();
+						double price = Double.parseDouble(individual.nextLine());
+						int quan = Integer.parseInt(individual.nextLine());
+						String seller = individual.nextLine();
+						cB.add(new Book(title, author, date, cat, con, price, quan, seller));
+					}
+				}
+				crt.books = cB;
+				
+				// Read Orders
+				while (true) {
+					String n = individual.nextLine();
+					if(n.equals("END OF ORDERS")) {
+						break;
+					}else {
+						int num = Integer.parseInt(n);
+						String date = individual.nextLine();
+						double to = Double.parseDouble(individual.nextLine());
+						double ta = Double.parseDouble(individual.nextLine());
+						ArrayList<String> titles = new ArrayList<>();
+						while (individual.hasNextLine()) {
+							String x = individual.nextLine();
+							if (x.equals("}")) {
+								break;
+							} else {
+								titles.add(x);
+							}
+						}
+						orders.add(new Order(num, date, to, ta, titles, true));
+					}		
+				}
+				individual.close();
+				
+				// Add user to the system
+				User usr = new User(email, pW, r, books, crt, orders);
+				sys.addUser(usr);
 			}
+			usrScanner.close();
 		} catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-	}
-
- 	private static void updateFiles() {
-		try {
-			File userFile = new File("PhaseIII/Files/users.txt");
-			userFile.getParentFile().mkdirs();
-			FileWriter users = new FileWriter(userFile);
-			
-			if(!sys.getUsers().isEmpty()) {
-				for(Entry<String, User> u : sys.getUsers().entrySet()) {
-					User usr = u.getValue();
-					users.write(usr.getEmail() + "\n");
-				}
-				users.close();
-				for(Entry<String, User> u : sys.getUsers().entrySet()) {
-					User user = u.getValue();
-					String email = user.getEmail();
-					
-					File indiFile = new File("PhaseIII/Files/" + email + "/info.txt");
-					indiFile.getParentFile().mkdirs();
-					FileWriter indi = new FileWriter(indiFile);
-					
-					indi.write(user.getPassword() + "\n");
-					//indi.write(user.getRoles() + "\n");
-					if(!user.getListings().isEmpty()) {
-						for(Book b : user.getListings()) {
-							indi.write("{\n");
-							indi.write(b.getTitle() + "\n");
-							indi.write(b.getAuthor() + "\n");
-							indi.write(b.getDate() + "\n");
-							indi.write(b.getCategory()  + "\n");
-							indi.write(b.getCondition() +  "\n");
-							indi.write(b.getPrice() + "\n");
-							indi.write(b.getQuantity() + "\n");
-							indi.write("}\n");
-						}
-					}
-					indi.write("END OF LISTINGS\n");
-					if(!user.getCart().books.isEmpty()) {
-						for(Book b : user.getCart().getBooks()) {
-							indi.write("{\n");
-							indi.write(b.getTitle() + "\n");
-							indi.write(b.getAuthor() + "\n");
-							indi.write(b.getDate() + "\n");
-							indi.write(b.getCategory()  + "\n");
-							indi.write(b.getCondition() +  "\n");
-							indi.write(b.getPrice() + "\n");
-							indi.write(b.getQuantity() + "\n");
-							indi.write(b.getSeller() + "\n");
-							indi.write("}\n");
-						}
-					}
-					indi.write("END OF CART\n");
-					indi.close();
-				}
-				
-			}
-			
-			File pubsFile = new File("PhaseIII/Files/pubs.txt");
-			pubsFile.getParentFile().mkdirs();
-			FileWriter pubs = new FileWriter(pubsFile);
-			if(!sys.getPublishedBooks().isEmpty()) {
-				for(Book b : sys.getPublishedBooks()) {
-					pubs.write("{\n");
-					pubs.write(b.getTitle() + "\n");
-					pubs.write(b.getAuthor() + "\n");
-					pubs.write(b.getDate() + "\n");
-					pubs.write(b.getCategory()  + "\n");
-					pubs.write(b.getCondition() +  "\n");
-					pubs.write(b.getPrice() + "\n");
-					pubs.write(b.getQuantity() + "\n");
-					pubs.write(b.getSeller() + "\n");
-					pubs.write("}\n");
-				}
-			}
-			pubs.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		// TODO Auto-generated method stub
-		
+	}
+
+	private static void updateFiles() {
+	    try {
+	        File userFile = new File("PhaseIII/Files/users.txt");
+	        userFile.getParentFile().mkdirs();
+	        FileWriter users = new FileWriter(userFile);
+	        
+	        // Write each user's email to users.txt
+	        if (!sys.getUsers().isEmpty()) {
+	            for (Entry<String, User> u : sys.getUsers().entrySet()) {
+	                User usr = u.getValue();
+	                users.write(usr.getEmail() + "\n");
+	            }
+	        }
+	        users.close();
+	        
+	        // Write individual user info to their info.txt file
+	        for (Entry<String, User> u : sys.getUsers().entrySet()) {
+	            User user = u.getValue();
+	            String email = user.getEmail();
+	            
+	            File indiFile = new File("PhaseIII/Files/" + email + "/info.txt");
+	            indiFile.getParentFile().mkdirs();
+	            FileWriter indi = new FileWriter(indiFile);
+	            
+	            // Write user password
+	            indi.write(user.getPassword() + "\n");
+	            
+	            // Write user's listings (books)
+	            if (!user.getListings().isEmpty()) {
+	                for (Book b : user.getListings()) {
+	                    indi.write(b.getTitle() + "\n");
+	                    indi.write(b.getAuthor() + "\n");
+	                    indi.write(b.getDate() + "\n");
+	                    indi.write(b.getCategory() + "\n");
+	                    indi.write(b.getCondition() + "\n");
+	                    indi.write(b.getPrice() + "\n");
+	                    indi.write(b.getQuantity() + "\n");
+	                }
+	            }
+	            indi.write("END OF LISTINGS\n");
+
+	            // Write cart details
+	            Cart cart = user.getCart();
+	            indi.write(cart.getTotal() + "\n");
+	            indi.write(cart.getTax() + "\n");
+	            if (!cart.getBooks().isEmpty()) {
+	                for (Book b : cart.getBooks()) {
+	                    indi.write(b.getTitle() + "\n");
+	                    indi.write(b.getAuthor() + "\n");
+	                    indi.write(b.getDate() + "\n");
+	                    indi.write(b.getCategory() + "\n");
+	                    indi.write(b.getCondition() + "\n");
+	                    indi.write(b.getPrice() + "\n");
+	                    indi.write(b.getQuantity() + "\n");
+	                    indi.write(b.getSeller() + "\n");
+	                }
+	            }
+	            indi.write("END OF CART\n");
+
+	            // Write orders
+	            if (!user.getOrders().isEmpty()) {
+	                for (Order o : user.getOrders()) {
+	                    indi.write(o.getNumber() + "\n");
+	                    indi.write(o.getOrderDate() + "\n");
+	                    indi.write(o.getTotalCost() + "\n");
+	                    indi.write(o.getTax() + "\n");
+	                    indi.write(o.getTitles());
+	                    indi.write("}\n");
+	                }
+	            }
+	            indi.write("END OF ORDERS\n");
+
+	            indi.close();
+	        }
+
+	        // Write published books
+	        File pubsFile = new File("PhaseIII/Files/pubs.txt");
+	        pubsFile.getParentFile().mkdirs();
+	        FileWriter pubs = new FileWriter(pubsFile);
+	        if (!sys.getPublishedBooks().isEmpty()) {
+	            for (Book b : sys.getPublishedBooks()) {
+	                pubs.write("{\n");
+	                pubs.write(b.getTitle() + "\n");
+	                pubs.write(b.getAuthor() + "\n");
+	                pubs.write(b.getDate() + "\n");
+	                pubs.write(b.getCategory() + "\n");
+	                pubs.write(b.getCondition() + "\n");
+	                pubs.write(b.getPrice() + "\n");
+	                pubs.write(b.getQuantity() + "\n");
+	                pubs.write(b.getSeller() + "\n");
+	                pubs.write("}\n");
+	            }
+	        }
+	        pubs.close();
+	    } catch (IOException e) {
+	        e.printStackTrace();
+	    }
 	}
 }

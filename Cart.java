@@ -8,16 +8,17 @@ public class Cart{
 	
 	public Cart() {
 		price = 0;
-		tax = 0;
+		tax = 0.081;
 		books = new ArrayList<Book>();
 	}
 	
 	public double getTotal() {
-		return this.price;
+		double total = price + (tax * price);
+		return total;
 	}
 	
 	public double getTax() {
-		return this.tax;
+		return tax * price;
 	}
 
 	public double getCosts(){
