@@ -22,7 +22,6 @@ public class Main extends Application{
 		new SellerView(sys, this, u, primaryStage);
 	}
 	
-	
 	public void showLoginView() {
 		primaryStage.setScene(new LoginView(sys, this).getScene());
 	}
@@ -36,15 +35,17 @@ public class Main extends Application{
 	}
 	
 	public static void main(String[] args) {
-		/*boolean[] r = {true, true};
-		User DEBUG = new User("beep", "boop", r);
+		boolean[] r = {true, true};
+		User beep = new User("beep", "boop", r);
+		User DEBUG = new User("DE", "BUG", r);
 		ArrayList<Book> l = new ArrayList<>();
-		l.add(new Book("bip", "bop", "2000", "Math", "Like New", 12.05, 2, "DEBUG"));
-		l.add(new Book("bip", "bop", "2000", "Math", "Like New", 12.05, 2, "DEBUG"));
+		l.add(new Book("bip", "bop", "2000", "Math", "Like New", 12.05, 2, "DE"));
+		l.add(new Book("boop", "bippy", "2000", "Math", "Like New", 12.05, 2, "DE"));
 		DEBUG.setListings(l);
-		sys.getPublishedBooks().add(new Book("bip", "bop", "2000", "Math", "Like New", 12.05, 2, "DEBUG"));
-		sys.getPublishedBooks().add(new Book("boop", "bippy", "2000", "Math", "Like New", 12.05, 2, "DEBUG"));
-		sys.addUser(DEBUG);*/
+		sys.getPublishedBooks().add(new Book("bip", "bop", "2000", "Math", "Like New", 12.05, 2, "DE"));
+		sys.getPublishedBooks().add(new Book("boop", "bippy", "2000", "Math", "Like New", 12.05, 2, "DE"));
+		sys.addUser(DEBUG);
+		sys.addUser(beep);
 		readFiles();
 		launch(args);
 		updateFiles();
@@ -85,7 +86,6 @@ public class Main extends Application{
 				
 				// Read Cart details
 				crt.price = Double.parseDouble(individual.nextLine());
-				crt.tax = Double.parseDouble(individual.nextLine());
 				ArrayList<Book> cB = new ArrayList<>();
 				while (true) {
 					String n = individual.nextLine();
@@ -183,7 +183,6 @@ public class Main extends Application{
 	            // Write cart details
 	            Cart cart = user.getCart();
 	            indi.write(cart.getTotal() + "\n");
-	            indi.write(cart.getTax() + "\n");
 	            if (!cart.getBooks().isEmpty()) {
 	                for (Book b : cart.getBooks()) {
 	                    indi.write(b.getTitle() + "\n");

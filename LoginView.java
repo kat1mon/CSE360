@@ -1,4 +1,3 @@
-package application;
 
 import javafx.beans.binding.Bindings;
 import javafx.event.ActionEvent;

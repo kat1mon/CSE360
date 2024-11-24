@@ -42,7 +42,8 @@ public class AccountView{
     private VBox scrlSetup() {
     	VBox list = new VBox(20);
     	
-        for(Book b : usr.getListings()) {
+        for(Book b : sys.getPublishedBooks()) {
+        	if(b.getSeller().equals(usr.getEmail())) {
         	Label l = new Label(
         			b.getTitle() + "\n" +
         			"Author: " + b.getAuthor() + "\n" +
@@ -55,6 +56,7 @@ public class AccountView{
         	l.setFont(Font.font("Arial", 18));
         	l.setPadding(new Insets(15));
         	list.getChildren().add(l);
+        	}
         }
         
         return list;
@@ -75,7 +77,7 @@ public class AccountView{
     private Pane createOuter() {
     	// First pane
         Pane pane = new Pane();
-        pane.setStyle("-fx-background-color: darkred;");
+        pane.setStyle("-fx-background-color: #8C1D40;");
         
         // Book Nook label
         Text title = new Text("Book Nook");
@@ -137,6 +139,7 @@ public class AccountView{
         change_Pswd_Button.setLayoutY(75);
         change_Pswd_Button.setPrefWidth(200);
         change_Pswd_Button.setPrefHeight(50);
+        change_Pswd_Button.setStyle("-fx-font-weight: bold; -fx-background-color: #8C1D40; -fx-text-fill: #FFD700");
         change_Pswd_Button.setOnAction(e -> changingPassword());
         overall.getChildren().add(change_Pswd_Button);
 
@@ -145,6 +148,7 @@ public class AccountView{
         withdraw_Button.setLayoutY(75);
         withdraw_Button.setPrefWidth(200);
 		withdraw_Button.setPrefHeight(50);
+		withdraw_Button.setStyle("-fx-font-weight: bold; -fx-background-color: #8C1D40; -fx-text-fill: #FFD700");
 		overall.getChildren().add(withdraw_Button);
 		
         //withdraw_Button.setOnAction(e -> withdrawFunds());
@@ -166,12 +170,12 @@ public class AccountView{
     private VBox orderSetup() {
     	VBox list = new VBox(20);
         
-        for(Order o : usr.getOrders()) {
+        for(Order o : usr.getOrders()) { 
         	Label l = new Label(
         			o.getNumber() + "\n" +
         			"Date: " + o.getOrderDate() + "\n" +
-        			"Cost: " + o.getTotalCost() + "\n" +
-        			"Tax: " + o.getTax() + "\n" +
+        			"Cost: " + String.format("%.2f", o.getTotalCost()) + "\n" +
+        			"Tax: " + String.format("%.2f", o.getTax()) + "\n" +
         			"Titles: " + o.getTitles()
         	);
         	l.setAlignment(Pos.CENTER);
@@ -233,10 +237,14 @@ public class AccountView{
         changeLabel.setFont(new Font("Arial", 36)); 
         v.getChildren().add(changeLabel);
         
-        HBox btn = new HBox(5);
-        btn.setPadding(new Insets(0, 0, 0, 100));
+        HBox btn = new HBox(60);
+        btn.setPadding(new Insets(0, 0, 0, 60));
         Button submitButton = new Button("Submit");
+        submitButton.setMinWidth(100);
+        submitButton.setStyle("-fx-font-weight: bold; -fx-background-color: #8C1D40; -fx-text-fill: #FFD700");
         Button cancelButton = new Button("Cancel");
+        cancelButton.setMinWidth(100);
+        cancelButton.setStyle("-fx-font-weight: bold; -fx-background-color: #8C1D40; -fx-text-fill: #FFD700");
         cancelButton.setOnAction(event -> changePassword.close());
         //dialog.getDialogPane().getButtonTypes().addAll(submitButton, ButtonType.CANCEL);
 

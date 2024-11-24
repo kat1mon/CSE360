@@ -10,6 +10,9 @@ public class Cart{
 		price = 0;
 		tax = 0.081;
 		books = new ArrayList<Book>();
+		for(Book b : books) {
+			price += b.getPrice();
+		}
 	}
 	
 	public double getTotal() {

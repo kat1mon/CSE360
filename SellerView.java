@@ -1,4 +1,3 @@
-package application;
 
 
 import java.util.ArrayList;
@@ -16,6 +15,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
@@ -42,10 +42,6 @@ public class SellerView {
     	this.primaryStage = primary;
     	scene = setupScene();
     	primaryStage.setScene(scene);
-    	//primaryStage.setMaxHeight(750);
-    	//primaryStage.setMinHeight(750);
-    	//primaryStage.setMaxWidth(825);
-    	//primaryStage.setMinWidth(825);
     }
     
     private void showAccountView() {
@@ -57,7 +53,8 @@ public class SellerView {
         
     	g = new ToggleGroup();
     	
-        for(Book b : usr.getListings()) {
+        for(Book b : sys.getPublishedBooks()) {
+        	if(b.getSeller().equals(usr.getEmail())) {
         	RadioButton n = new RadioButton(
         			b.getTitle() + "\n" +
         			"Author: " + b.getAuthor() + "\n" +
@@ -69,6 +66,7 @@ public class SellerView {
         	n.setUserData(b);
         	n.setToggleGroup(g);
         	list.getChildren().add(n);
+        	}
         }
         
         return list;
@@ -288,94 +286,81 @@ public class SellerView {
     }
     
    private void confirm_user_window(Book b) {
-	   System.out.println("REACHED");
         Stage confirmationStage = new Stage();
-        Pane pane = new Pane();
+        confirmationStage.setTitle("Confirm Publishing");
+        
+        VBox pane = new VBox(20);
         pane.setPrefSize(400, 400);
+        pane.setAlignment(Pos.CENTER);
+        pane.setStyle("-fx-border-color: #8C1D40;");
 
         Label Publish_Listing = new Label("Publish Listing");
-        Publish_Listing.setFont(new Font("Arial", 20)); 
-        Publish_Listing.setLayoutX(140);
-        Publish_Listing.setLayoutY(10);
+        Publish_Listing.setFont(Font.font("arial", FontWeight.BOLD, 20));
         pane.getChildren().add(Publish_Listing);
         
-        Label Second_row = new Label("Are you sure you want to publish the following listing?");
-        Second_row.setLayoutX(60);
-        Second_row.setLayoutY(40);
+        Label Second_row = new Label("Are you sure you want to publish the following listing?\n"
+        		+ "Note: If you publish improper listings, you may loose\n"
+        		+ "access to selling books on BookNook");
         pane.getChildren().add(Second_row);
         
-        Label Third_row = new Label("Note: If you publish improper listings, you may loose");
-        Third_row.setLayoutX(60);
-        Third_row.setLayoutY(60);
-        pane.getChildren().add(Third_row);
-        
-        Label Fourth_row = new Label("access to selling books on BookNook");
-        Fourth_row.setLayoutX(80);
-        Fourth_row.setLayoutY(80);
-        pane.getChildren().add(Fourth_row);
-        
-        
         Pane pane2 = new Pane();
-        pane2.setPrefSize(200, 200);
-        pane2.setLayoutX(50);
-        pane2.setLayoutY(100);
+        pane2.setMaxHeight(200);
+        pane2.setMaxWidth(175);
+        pane2.setStyle("-fx-border-color: black");
         pane.getChildren().add(pane2);
         
         Label book_name_text = new Label(b.getTitle());
-        book_name_text.setLayoutX(70);
+        book_name_text.setLayoutX(10);
         book_name_text.setLayoutY(10);
         pane2.getChildren().add(book_name_text);
         
         Label author_text = new Label(String.format("Author: %s", b.getAuthor()));
-        author_text.setLayoutX(80);
+        author_text.setLayoutX(15);
         author_text.setLayoutY(25);
         pane2.getChildren().add(author_text);
         
         Label year_text = new Label(String.format("Published: %s", b.getDate()));
-        year_text.setLayoutX(80);
+        year_text.setLayoutX(15);
         year_text.setLayoutY(40);
         pane2.getChildren().add(year_text);
         
         Label category_text = new Label(String.format("Published: %s", b.getCategory()));
-        category_text.setLayoutX(80);
+        category_text.setLayoutX(15);
         category_text.setLayoutY(55);
         pane2.getChildren().add(category_text);
         
         Label condition_text = new Label(String.format("Condition: %s", b.getCondition()));
-        condition_text.setLayoutX(80);
+        condition_text.setLayoutX(15);
         condition_text.setLayoutY(70);
         pane2.getChildren().add(condition_text);
         
         Label price_text = new Label(String.format("Price: $ %.2f", b.getPrice()));
-        price_text.setLayoutX(80);
+        price_text.setLayoutX(15);
         price_text.setLayoutY(85);
         pane2.getChildren().add(price_text);
         
         Label quantity_text = new Label(String.format("Quantity: %d", b.getQuantity()));
-        quantity_text.setLayoutX(80);
+        quantity_text.setLayoutX(15);
         quantity_text.setLayoutY(100);
         pane2.getChildren().add(quantity_text);
         
         
-        Label Fifth_row = new Label("By clicking yes, you agree that 20% of your profit will go");
-        Fifth_row.setLayoutX(60);
-        Fifth_row.setLayoutY(240);
+        Label Fifth_row = new Label("By clicking yes, you agree that 20% of your profit will go\n"
+        		+ "to the system administration");
         pane.getChildren().add(Fifth_row);
         
-        Label Sixth_row = new Label("to the system administration");
-        Sixth_row.setLayoutX(100);
-        Sixth_row.setLayoutY(260);
-        pane.getChildren().add(Sixth_row);
-     
+        HBox btn = new HBox(60);
+        btn.setPadding(new Insets(0, 0, 0, 60));
         Button yes_btn = new Button("Yes");
-        yes_btn.setLayoutX(60);
-        yes_btn.setLayoutY(300);
-        pane.getChildren().add(yes_btn);
+        yes_btn.setMinWidth(100);
+        yes_btn.setStyle("-fx-font-weight: bold; -fx-background-color: #8C1D40; -fx-text-fill: #FFD700");
+        btn.getChildren().add(yes_btn);
         
         Button no_btn = new Button("No");
-        no_btn.setLayoutX(300);
-        no_btn.setLayoutY(300);
-        pane.getChildren().add(no_btn);
+        no_btn.setStyle("-fx-font-weight: bold; -fx-background-color: #8C1D40; -fx-text-fill: #FFD700");
+        no_btn.setMinWidth(100);
+        btn.getChildren().add(no_btn);
+        pane.getChildren().add(btn);
         
 
         Scene confirmationScene = new Scene(pane, 400, 400);
@@ -400,9 +385,9 @@ public class SellerView {
 
    private void confirmListing(Book b) {
 	   sys.addBook(b);
-	   ArrayList<Book> l = this.usr.getListings();
+	   ArrayList<Book> l = usr.getListings();
    	   l.add(b);
-   	   this.usr.setListings(l);
+   	   usr.setListings(l);
    	   
    	   TextField title = (TextField) this.scene.lookup("#bookField");
    	   title.clear();
@@ -435,74 +420,74 @@ public class SellerView {
   
    private void deleted_window(Book selection) {
             Stage deletionStage = new Stage();
-            Pane pane = new Pane();
+            deletionStage.setTitle("Delete Listing");
+            
+            VBox pane = new VBox(20);
             pane.setPrefSize(400, 400);
+            pane.setAlignment(Pos.CENTER);
+            pane.setStyle("-fx-border-color: #8C1D40;");
 
             Label removeListing = new Label("Remove Listing");
-            removeListing.setFont(new Font("Arial", 20));
-            removeListing.setLayoutX(140);
-            removeListing.setLayoutY(10);
+            removeListing.setFont(Font.font("arial", FontWeight.BOLD, 20));
             pane.getChildren().add(removeListing);
 
             Label promptText = new Label("Are you sure you want to remove the following listing?");
-            promptText.setLayoutX(60);
-            promptText.setLayoutY(40);
             pane.getChildren().add(promptText);
 
             Pane detailsPane = new Pane();
-            detailsPane.setPrefSize(200, 200);
-            detailsPane.setLayoutX(50);
-            detailsPane.setLayoutY(100);
+            detailsPane.setMaxHeight(200);
+            detailsPane.setMaxWidth(175);
+            detailsPane.setStyle("-fx-border-color: black");
             pane.getChildren().add(detailsPane);
 
             Label bookNameText = new Label(selection.getTitle());
-            bookNameText.setLayoutX(70);
+            bookNameText.setLayoutX(10);
             bookNameText.setLayoutY(10);
             detailsPane.getChildren().add(bookNameText);
 
             Label authorText = new Label(String.format("Author: %s", selection.getAuthor()));
-            authorText.setLayoutX(80);
+            authorText.setLayoutX(15);
             authorText.setLayoutY(25);
             detailsPane.getChildren().add(authorText);
 
             Label yearText = new Label(String.format("Published: %s", selection.getDate()));
-            yearText.setLayoutX(80);
+            yearText.setLayoutX(15);
             yearText.setLayoutY(40);
             detailsPane.getChildren().add(yearText);
 
             Label categoryText = new Label(String.format("Category: %s", selection.getCategory()));
-            categoryText.setLayoutX(80);
+            categoryText.setLayoutX(15);
             categoryText.setLayoutY(55);
             detailsPane.getChildren().add(categoryText);
 
             Label conditionText = new Label(String.format("Condition: %s", selection.getCondition()));
-            conditionText.setLayoutX(80);
+            conditionText.setLayoutX(15);
             conditionText.setLayoutY(70);
             detailsPane.getChildren().add(conditionText);
 
             Label priceText = new Label(String.format("Price: $ %.2f", selection.getPrice()));
-            priceText.setLayoutX(80);
+            priceText.setLayoutX(15);
             priceText.setLayoutY(85);
             detailsPane.getChildren().add(priceText);
 
             Label quantityText = new Label(String.format("Quantity: %d", selection.getQuantity()));
-            quantityText.setLayoutX(80);
+            quantityText.setLayoutX(15);
             quantityText.setLayoutY(100);
             detailsPane.getChildren().add(quantityText);
-
-            Button yesButton = new Button("Yes");
-            yesButton.setLayoutX(60);
-            yesButton.setLayoutY(300);
-            pane.getChildren().add(yesButton);
-
-            Button noButton = new Button("No");
-            noButton.setLayoutX(300);
-            noButton.setLayoutY(300);
-            pane.getChildren().add(noButton);
-
-            Scene deletionScene = new Scene(pane, 400, 400);
-            deletionStage.setScene(deletionScene);
-            deletionStage.show();
+            
+            HBox btn = new HBox(60);
+            btn.setPadding(new Insets(0, 0, 0, 70));
+            Button yes_btn = new Button("Yes");
+            yes_btn.setMinWidth(100);
+            yes_btn.setStyle("-fx-font-weight: bold; -fx-background-color: #8C1D40; -fx-text-fill: #FFD700");
+            btn.getChildren().add(yes_btn);
+            
+            Button no_btn = new Button("No");
+            no_btn.setStyle("-fx-font-weight: bold; -fx-background-color: #8C1D40; -fx-text-fill: #FFD700");
+            no_btn.setMinWidth(100);
+            btn.getChildren().add(no_btn);
+            pane.getChildren().add(btn);
+            
             
             EventHandler<ActionEvent> confirm = new EventHandler<ActionEvent>() {
             	public void handle(ActionEvent e) {
@@ -510,12 +495,18 @@ public class SellerView {
             		deletionStage.close();
             	}
             };
-
-            yesButton.setOnAction(confirm);
-
-            noButton.setOnAction(e -> {
-                deletionStage.close();
+            
+            yes_btn.setOnAction(confirm);
+            
+            no_btn.setOnAction(e -> {
+            	deletionStage.close();
             });
+
+
+
+            Scene deletionScene = new Scene(pane, 400, 400);
+            deletionStage.setScene(deletionScene);
+            deletionStage.show();
    }
    
    private void removeBook(Book selection) {

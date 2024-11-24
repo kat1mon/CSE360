@@ -129,34 +129,131 @@ public class BuyerView{
 		return bookScrollPane;
 	}
 	
-	
 	private void clearCart() {
 		this.usr.setCart(new Cart());
 		updateCartCosts();
 		ScrollPane s = (ScrollPane) this.scene.lookup("#crt");
 		s.setContent(cartSetup());
 		
-		// JUST ADDED
-				FlowPane bookList = (FlowPane) this.scene.lookup("#bookList");		// located bookList FlowPane
+				FlowPane bookList = (FlowPane) this.scene.lookup("#bookList");	
 				
-				// iterate through all children in bookList
 				for (javafx.scene.Node node : bookList.getChildren()) {
-					// grab each child
 					if (node instanceof VBox) {
 						VBox bookItem = (VBox) node;
 						
-						// find "Add to Cart" button in each child
 						for (javafx.scene.Node child : bookItem.getChildren()) {
-							// look for add to cart button
 							if (child instanceof Button) {
-								Button addToCartButton = (Button) child;		// grab "Add to Cart" button
-								addToCartButton.setDisable(false);				// re-enable 
+								Button addToCartButton = (Button) child;
+								addToCartButton.setDisable(false);		
 							}
 						}
 					}
 				}
 	}
 	
+	private void removeItem(Book b) {
+		Stage confirmation = new Stage();
+		VBox pane = new VBox(20);
+		pane.setPrefSize(400, 400);
+		pane.setAlignment(Pos.CENTER);
+        pane.setStyle("-fx-border-color: #8C1D40;");
+		
+		Label removeListing = new Label("Remove Listing");
+		removeListing.setFont(Font.font("arial", FontWeight.BOLD, 20));
+        pane.getChildren().add(removeListing);
+        
+        Label Second_row = new Label("Are you sure you want to remove\nthe item from the cart?");
+        pane.getChildren().add(Second_row);
+        
+        Pane pane2 = new Pane();
+        pane2.setMaxHeight(200);
+        pane2.setMaxWidth(175);
+        pane2.setStyle("-fx-border-color: black");
+        pane.getChildren().add(pane2);
+        
+        Label book_name_text = new Label(b.getTitle());
+        book_name_text.setLayoutX(10);
+        book_name_text.setLayoutY(10);
+        pane2.getChildren().add(book_name_text);
+        
+        Label author_text = new Label(String.format("Author: %s", b.getAuthor()));
+        author_text.setLayoutX(15);
+        author_text.setLayoutY(25);
+        pane2.getChildren().add(author_text);
+        
+        Label year_text = new Label(String.format("Published: %s", b.getDate()));
+        year_text.setLayoutX(15);
+        year_text.setLayoutY(40);
+        pane2.getChildren().add(year_text);
+        
+        Label category_text = new Label(String.format("Published: %s", b.getCategory()));
+        category_text.setLayoutX(15);
+        category_text.setLayoutY(55);
+        pane2.getChildren().add(category_text);
+        
+        Label condition_text = new Label(String.format("Condition: %s", b.getCondition()));
+        condition_text.setLayoutX(15);
+        condition_text.setLayoutY(70);
+        pane2.getChildren().add(condition_text);
+        
+        Label price_text = new Label(String.format("Price: $ %.2f", b.getPrice()));
+        price_text.setLayoutX(15);
+        price_text.setLayoutY(85);
+        pane2.getChildren().add(price_text);
+        
+        Label quantity_text = new Label(String.format("Quantity: %d", b.getQuantity()));
+        quantity_text.setLayoutX(15);
+        quantity_text.setLayoutY(100);
+        pane2.getChildren().add(quantity_text);
+        
+        HBox btn = new HBox(60);
+        btn.setPadding(new Insets(0, 0, 0, 60));
+        Button yes_btn = new Button("Yes");
+        yes_btn.setMinWidth(100);
+        yes_btn.setStyle("-fx-font-weight: bold; -fx-background-color: #8C1D40; -fx-text-fill: #FFD700");
+        btn.getChildren().add(yes_btn);
+        
+        Button no_btn = new Button("No");
+        no_btn.setStyle("-fx-font-weight: bold; -fx-background-color: #8C1D40; -fx-text-fill: #FFD700");
+        no_btn.setMinWidth(100);
+        btn.getChildren().add(no_btn);
+        pane.getChildren().add(btn);
+        
+        EventHandler<ActionEvent> confirm = new EventHandler<ActionEvent>() {
+        	public void handle(ActionEvent e) {
+        		usr.getCart().price -= b.getPrice();
+        		usr.getCart().remove_Book(b);	
+        		updateCartCosts();
+        		ScrollPane s = (ScrollPane) scene.lookup("#crt");
+        		s.setContent(cartSetup());
+        		confirmation.close();
+        		
+        		FlowPane bookList = (FlowPane) scene.lookup("#bookList");
+				for (javafx.scene.Node node : bookList.getChildren()) {
+					if (node instanceof VBox) {
+						VBox bookItem = (VBox) node;
+
+						for (javafx.scene.Node child : bookItem.getChildren()) {
+							if (child instanceof Button) {
+								Button addToCartButton = (Button) child;		
+								addToCartButton.setDisable(false);	
+							}
+						}
+					}
+				}
+        	}
+        };
+        
+        yes_btn.setOnAction(confirm);
+        
+        no_btn.setOnAction(e -> {
+        	confirmation.close();
+        });
+        
+        Scene confirmationScene = new Scene(pane, 400, 400);
+        confirmation.setScene(confirmationScene);
+        confirmation.show();
+	}
 	
 	private GridPane cartSetup() {
 		GridPane cartListView = new GridPane();
@@ -165,20 +262,29 @@ public class BuyerView{
 		
 		int i = 0;
 		for(Book b : usr.getCart().books) {
-			Button x = new Button("X");
-			x.setMaxSize(2, 2);
-			cartListView.add(x, 0, i);
-			
-			Label l = new Label(b.getTitle());
-			l.setFont(Font.font("Arial", FontWeight.BOLD, 16));
-			cartListView.add(l, 1, i);
-			Label p = new Label("$" + String.format("%.2f", b.getPrice()));
-			l.setFont(Font.font("Arial", 16));
-			cartListView.add(p, 2, i);
-			i++;
+			if(sys.getPublishedBooks().contains(b)) {
+				Button x = new Button("X");
+				x.setMaxSize(2, 2);
+				cartListView.add(x, 0, i);
+				EventHandler<ActionEvent> rmv = new EventHandler<ActionEvent>() {
+					public void handle(ActionEvent arg0) {
+						removeItem(b);
+					}
+				};
+				x.setOnAction(rmv);
+				
+				Label l = new Label(b.getTitle());
+				l.setFont(Font.font("Arial", FontWeight.BOLD, 16));
+				cartListView.add(l, 1, i);
+				Label p = new Label("$" + String.format("%.2f", b.getPrice()));
+				l.setFont(Font.font("Arial", 16));
+				cartListView.add(p, 2, i);
+				i++;
+			}
 		}
 		cartListView.setPrefHeight(450);
 		cartListView.setFocusTraversable(false);
+		updateCartCosts();
 		
 		return cartListView;
 	}
@@ -218,11 +324,15 @@ public class BuyerView{
 				Label ques = new Label("Are you sure you want to clear the cart?");
 				v.getChildren().add(ques);
 				
-				HBox btn = new HBox(50);
-				btn.setPadding(new Insets(0, 0, 0, 120));
-				Button submitButton = new Button("Confirm");
+				HBox btn = new HBox(60);
+		        btn.setPadding(new Insets(0, 0, 0, 60));
+		        Button submitButton = new Button("Confirm");
+		        submitButton.setMinWidth(100);
+		        submitButton.setStyle("-fx-font-weight: bold; -fx-background-color: #8C1D40; -fx-text-fill: #FFD700");
 		        Button cancelButton = new Button("Cancel");
-		        cancelButton.setOnAction(event -> clearConfirm.close());
+		        cancelButton.setMinWidth(100);
+		        cancelButton.setStyle("-fx-font-weight: bold; -fx-background-color: #8C1D40; -fx-text-fill: #FFD700");
+		        
 				
 		        EventHandler<ActionEvent> submit = new EventHandler<ActionEvent>() {
 					public void handle(ActionEvent arg0) {
@@ -231,6 +341,7 @@ public class BuyerView{
 					}
 		        };
 		        submitButton.setOnAction(submit);
+		        cancelButton.setOnAction(event -> clearConfirm.close());
 		        btn.getChildren().add(submitButton);
 		        btn.getChildren().add(cancelButton);
 		        
@@ -248,7 +359,11 @@ public class BuyerView{
 		purchaseButton.setStyle("-fx-background-color: #8C1D40; -fx-text-fill: white;");
 		purchaseButton.setFont(Font.font("arial", FontWeight.BOLD, 16));
 		purchaseButton.setPrefWidth(150);	
-		purchaseButton.setOnAction(e -> showPurchaseConfirmationPopup());
+		purchaseButton.setOnAction(e -> {
+			if(!usr.getCart().getBooks().isEmpty()) {
+				showPurchaseConfirmationPopup();
+			}
+		});
 		
 		VBox cartButtonLayout = new VBox(10);
 		cartButtonLayout.setPadding(new Insets(10));
@@ -261,7 +376,6 @@ public class BuyerView{
 		cartLayout.getChildren().addAll(cartLabel, scrl, tx, to, cartButtonLayout);
 		return cartLayout;
 	}
-	
 	
 	private Scene setupScene() {
 		HBox top = createTopBar();
@@ -303,8 +417,8 @@ public class BuyerView{
 	
 	private void updateCartCosts()
 	{
-		tx.setText(String.format("Tax (8.1%%):\t\t\t$%.2f", usr.getCart().getTax()));
 		to.setText(String.format("Total:\t\t\t\t$%.2f", usr.getCart().getTotal()));
+		tx.setText(String.format("Tax (8.1%%):\t\t\t$%.2f", usr.getCart().getTax()));
 		
 	}
 	
@@ -370,46 +484,58 @@ public class BuyerView{
 	    // Create the confirmation dialog
 	    Stage popup = new Stage();
 	    popup.setTitle("Purchase Confirmation");
+	    VBox v = new VBox(20);
+	    v.setPrefSize(400, 400);
+	    v.setStyle("-fx-border-color: #8C1D40;");
+	    v.setAlignment(Pos.CENTER);
+	    
+	    Label top = new Label("Confirm Purchase");
+	    top.setFont(Font.font("arial", FontWeight.BOLD, 20));
+	    v.getChildren().add(top);
 	    
 	    // Set up the message text
 	    Label confirmationMessage = new Label("Are you sure you want to complete the purchase?");
-	    confirmationMessage.setFont(Font.font("arial", FontWeight.BOLD, 14));
-	    confirmationMessage.setWrapText(true);
-	    confirmationMessage.setPadding(new Insets(10));
+	    v.getChildren().add(confirmationMessage);
+	    
+	    Label confirmationMessage1 = new Label("By selecting \"Yes\", you agree to the terms and will be\nbilled for the total below.");
+	    v.getChildren().add(confirmationMessage1);
+	    
+	    Label confirmationMessage2 = new Label("Selecting \"No\" will close the popup and\nbring you back to the listings.");
+	    v.getChildren().add(confirmationMessage2);
+	    
+	    Label total = new Label(String.format("GRAND TOTAL:\t$%.2f", usr.getCart().getTotal()) );
+	    total.setFont(Font.font("Arial", FontWeight.BOLD, 18));
+	    v.getChildren().add(total);
 	    
 	    // Create the Yes and No buttons
+	    HBox btn = new HBox(60);
+	    btn.setPadding(new Insets(0, 0, 0, 60));
+	    
 	    Button yesButton = new Button("Yes");
-	    yesButton.setStyle("-fx-background-color: #8C1D40; -fx-text-fill: white;");
-	    yesButton.setFont(Font.font("arial", FontWeight.BOLD, 14));
+	    yesButton.setStyle("-fx-font-weight: bold; -fx-background-color: #8C1D40; -fx-text-fill: #FFD700");
+	    yesButton.setMinWidth(100);
 	    yesButton.setOnAction(e -> {
 	        // Confirm the purchase
 	        completePurchase();
 	        popup.close(); // Close the popup
 	    });
+	    btn.getChildren().add(yesButton);
 	    
 	    Button noButton = new Button("No");
-	    noButton.setStyle("-fx-background-color: #9a9a9a; -fx-text-fill: white;");
-	    noButton.setFont(Font.font("arial", FontWeight.BOLD, 14));
+	    noButton.setStyle("-fx-font-weight: bold; -fx-background-color: #8C1D40; -fx-text-fill: #FFD700");
+	    noButton.setMinWidth(100);
 	    noButton.setOnAction(e -> {
 	        // Cancel the purchase
 	        popup.close(); // Close the popup
 	    });
+	    btn.getChildren().add(noButton);
+
+	    v.getChildren().add(btn);
 	    
-	    // Layout for the buttons
-	    HBox buttonLayout = new HBox(10, noButton, yesButton);
-	    buttonLayout.setAlignment(Pos.CENTER);
-	    buttonLayout.setPadding(new Insets(10));
-
-	    // Combine message and buttons into a vertical layout
-	    VBox popupLayout = new VBox(10, confirmationMessage, to, buttonLayout);
-	    popupLayout.setPadding(new Insets(10));
-	    popupLayout.setStyle("-fx-background-color: white; -fx-border-color: gray; -fx-border-width: 1px;");
-	    popupLayout.setAlignment(Pos.CENTER);
-
 	    // Set up the scene and stage for the popup
-	    Scene popupScene = new Scene(popupLayout, 300, 150);
+	    Scene popupScene = new Scene(v, 400, 400);
 	    popup.setScene(popupScene);
-	    popup.showAndWait(); // Show the popup and wait for user action
+	    popup.show();
 	}
 	
 	private void completePurchase() {
