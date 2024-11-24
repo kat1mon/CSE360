@@ -1,3 +1,5 @@
+package application;
+
 
 import java.util.ArrayList;
 
@@ -40,6 +42,10 @@ public class SellerView {
     	this.primaryStage = primary;
     	scene = setupScene();
     	primaryStage.setScene(scene);
+    	//primaryStage.setMaxHeight(750);
+    	//primaryStage.setMinHeight(750);
+    	//primaryStage.setMaxWidth(825);
+    	//primaryStage.setMinWidth(825);
     }
     
     private void showAccountView() {
@@ -71,7 +77,7 @@ public class SellerView {
     private Pane createOuter() {
     	// First pane
         Pane pane = new Pane();
-        pane.setStyle("-fx-background-color: darkred;");
+        pane.setStyle("-fx-background-color: #8C1D40;");
         
         // Book Nook label
         Text title = new Text("Book Nook");
@@ -218,6 +224,8 @@ public class SellerView {
     		
     		 // Add the Publish button
     		Button publish_Btn = new Button("Publish");
+    		publish_Btn.setStyle("-fx-background-color: #8C1D40; -fx-text-fill: white;");
+    		publish_Btn.setFont(Font.font("arial", FontWeight.BOLD, 16));
     		publish_Btn.setPrefWidth(200);
     		publish_Btn.setPrefHeight(50);
     		result.getChildren().add(publish_Btn);
@@ -259,6 +267,8 @@ public class SellerView {
         result.getChildren().add(scrl);
         
         Button delete_Btn = new Button("Delete");
+        delete_Btn.setStyle("-fx-background-color: #8C1D40; -fx-text-fill: white;");
+        delete_Btn.setFont(Font.font("arial", FontWeight.BOLD, 16));
 		delete_Btn.setPrefWidth(200);
 		delete_Btn.setPrefHeight(50);
 		result.getChildren().add(delete_Btn);
