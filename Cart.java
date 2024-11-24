@@ -21,13 +21,13 @@ public class Cart{
 		return tax * price;
 	}
 
-	public double getCosts(){
+	/*public double getCosts(){
 		double total = 0;
 		for(int i = 0; i < books.size(); i++) {
 			total += books.get(i).getPrice();
 		}
     return total;
-	}
+	}*/
 	
 	public ArrayList<Book> getBooks(){
 		return books;

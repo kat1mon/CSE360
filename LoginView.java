@@ -1,7 +1,11 @@
 import javafx.beans.binding.Bindings;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -132,25 +136,34 @@ public class LoginView {
 						)
 				);
 				
-				loginButton.setOnAction(e ->
-				{
-					// Determines which view to send the user to based on mode selected
-					String selectedMode = modeCombo.getValue();  // Get the selected mode
-					String inputEmail = idField.getText();
-					String pW = passwordField.getText();
-					User selected = sys.getUser(inputEmail);
-					
-					if (selectedMode != null && selected != null && selected.checkPassword(pW)) 
-					{
-						if(selectedMode == "Buying") {
-							redirectScreen("Buying", selected);
-						}else if(selectedMode == "Selling") {
-							redirectScreen("Selling", selected);
+				EventHandler<ActionEvent> login = new EventHandler<ActionEvent>() {
+					public void handle(ActionEvent e) {
+						String selectedMode = modeCombo.getValue();  // Get the selected mode
+						String inputEmail = idField.getText();
+						String pW = passwordField.getText();
+						User selected = sys.getUser(inputEmail);
+						
+						Alert alert = new Alert(AlertType.ERROR);
+						alert.setTitle("ERROR!");
+						if(selected == null) {
+							alert.setContentText("USER NOT FOUND");
+							alert.showAndWait();
+						}else if(!selected.checkPassword(pW)) {
+							alert.setContentText("INCORRECT PASSWORD");
+							alert.showAndWait();
 						}else {
-							System.out.println("Error: Invalid Mode Selection.");
+							if(selectedMode == "Buying") {
+								redirectScreen("Buying", selected);
+							}else if(selectedMode == "Selling") {
+								redirectScreen("Selling", selected);
+							}else {
+								System.out.println("Error: Invalid Mode Selection.");
+							}
 						}
 					}
-				});
+				};
+				
+				loginButton.setOnAction(login);
 			return new Scene(mainLayout, 800, 700);
 				
 	}

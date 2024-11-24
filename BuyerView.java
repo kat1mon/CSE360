@@ -129,6 +129,7 @@ public class BuyerView{
 		return bookScrollPane;
 	}
 	
+	
 	private void clearCart() {
 		this.usr.setCart(new Cart());
 		updateCartCosts();
@@ -155,6 +156,7 @@ public class BuyerView{
 					}
 				}
 	}
+	
 	
 	private GridPane cartSetup() {
 		GridPane cartListView = new GridPane();
@@ -204,7 +206,39 @@ public class BuyerView{
 		
 		EventHandler<ActionEvent> clear = new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent e) {
-				clearCart();
+				if(!usr.getCart().books.isEmpty()) {
+				Stage clearConfirm = new Stage();
+				VBox v = new VBox(10);
+				v.setAlignment(Pos.CENTER);
+				
+				Label clearTitle = new Label("Clear Cart");
+				clearTitle.setFont(new Font("Arial", 36));
+				v.getChildren().add(clearTitle);
+				
+				Label ques = new Label("Are you sure you want to clear the cart?");
+				v.getChildren().add(ques);
+				
+				HBox btn = new HBox(50);
+				btn.setPadding(new Insets(0, 0, 0, 120));
+				Button submitButton = new Button("Confirm");
+		        Button cancelButton = new Button("Cancel");
+		        cancelButton.setOnAction(event -> clearConfirm.close());
+				
+		        EventHandler<ActionEvent> submit = new EventHandler<ActionEvent>() {
+					public void handle(ActionEvent arg0) {
+						clearCart();
+						clearConfirm.close();
+					}
+		        };
+		        submitButton.setOnAction(submit);
+		        btn.getChildren().add(submitButton);
+		        btn.getChildren().add(cancelButton);
+		        
+		        v.getChildren().add(btn);
+		        Scene clearScene = new Scene(v, 400, 400);
+		        clearConfirm.setScene(clearScene);
+		        clearConfirm.show();
+				}
 			}
 		};
 		
@@ -227,6 +261,7 @@ public class BuyerView{
 		cartLayout.getChildren().addAll(cartLabel, scrl, tx, to, cartButtonLayout);
 		return cartLayout;
 	}
+	
 	
 	private Scene setupScene() {
 		HBox top = createTopBar();
@@ -366,7 +401,7 @@ public class BuyerView{
 	    buttonLayout.setPadding(new Insets(10));
 
 	    // Combine message and buttons into a vertical layout
-	    VBox popupLayout = new VBox(10, confirmationMessage, buttonLayout);
+	    VBox popupLayout = new VBox(10, confirmationMessage, to, buttonLayout);
 	    popupLayout.setPadding(new Insets(10));
 	    popupLayout.setStyle("-fx-background-color: white; -fx-border-color: gray; -fx-border-width: 1px;");
 	    popupLayout.setAlignment(Pos.CENTER);
